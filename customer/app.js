@@ -160,7 +160,7 @@
         <div class="plan-cards">${S.plans.types.map((p) => `
           <button class="plan-card" data-a="startWiz" data-type="${p.id}" style="--pc:${p.color}">
             <span class="pc-ic">${p.icon}</span><b>${E(Lx(p.name))}</b><small>${E(Lx(p.desc))}</small>
-            <span class="pc-price"><small>${T('from')}</small> <b class="num">${money(p.pricePerMeal * (1 - 0.12))}</b><small>/${T('perMeal')}</small></span>
+            <span class="pc-price"><small>${T('from')}</small> <b class="num">${money(DV.price({ planType: p.id, days: 5, option: 'lunch', city: '' }).total)}</b><small> / ${T('daysN', { n: 5 })}</small></span>
             <span class="pc-kcal num">${p.kcal} ${T('kcal')}</span>
           </button>`).join('')}</div></section>
       <section class="sec"><div class="sec-h"><h3>${T('thisWeek')}</h3><button class="link" data-a="page" data-p="menu">${T('seeAll')}</button></div>
@@ -410,7 +410,7 @@
     const canNext = wValid();
     const cta = st === 'pay'
       ? `<button class="btn btn-primary btn-block" data-a="payNow" ${canNext ? '' : 'disabled'}>🔒 ${T('payNow', { x: money(pr.total) })}</button>`
-      : `<div class="price-mini"><small class="muted">${T('total')}</small><b class="num">${money(pr.total)}</b><small class="muted num">${money(pr.perMeal)} / ${T('perMeal')}</small></div><button class="btn btn-primary grow" data-a="wizNext" ${canNext ? '' : 'disabled'}>${T('continue')}</button>`;
+      : `<div class="price-mini"><small class="muted">${T('total')}</small><b class="num">${money(pr.total)}</b><small class="muted num">${T('mealsN', { n: pr.meals })}</small></div><button class="btn btn-primary grow" data-a="wizNext" ${canNext ? '' : 'disabled'}>${T('continue')}</button>`;
     return `<div class="screen wiz ${ui.anim === 'push' ? 'push' : ui.anim === 'step' ? 'step' : ''}">
       <header class="nav"><button class="icon-btn" data-a="wizBack">${back()}</button><div class="grow wiz-t"><small class="muted num">${w.step + 1} / ${STEPS.length}</small><b>${titles[st]}</b></div><button class="icon-btn" data-a="wizClose">✕</button></header>
       <div class="wiz-progress"><i style="width:${((w.step + 1) / STEPS.length) * 100}%"></i></div>
@@ -431,7 +431,7 @@
       const sample = DV.mealsFor(p.id).slice(0, 3);
       return `<button class="opt-card type ${w.type === p.id ? 'on' : ''}" data-a="wizSet" data-k="type" data-v="${p.id}" style="--pc:${p.color}">
         <div class="row"><span class="pc-ic">${p.icon}</span><div class="grow"><b>${E(Lx(p.name))}</b><small class="muted">${E(Lx(p.desc))}</small></div><span class="radio"></span></div>
-        <div class="row between"><div class="thumbs">${sample.map((m) => `<img src="${m.img}" alt="">`).join('')}</div><span class="small"><b class="num">${money(p.pricePerMeal)}</b> <span class="muted">/ ${T('perMeal')}</span></span></div>
+        <div class="row between"><div class="thumbs">${sample.map((m) => `<img src="${m.img}" alt="">`).join('')}</div><span class="small"><span class="muted">${T('from')}</span> <b class="num">${money(DV.price({ planType: p.id, days: 5, option: 'lunch', city: '' }).total)}</b> <span class="muted">/ ${T('daysN', { n: 5 })}</span></span></div>
         <small class="muted num">🔥 ${p.kcal} ${T('kcal')}</small></button>`;
     }).join('')}</div>`;
   }
@@ -440,7 +440,7 @@
     return `<div class="pad-x stack">${DV.state.plans.durations.map((d) => {
       const pr = DV.price({ planType: w.type, days: d.days, option: w.option, city: wCity() });
       return `<button class="opt-card ${w.days === d.days ? 'on' : ''}" data-a="wizSet" data-k="days" data-v="${d.days}" style="--pc:${t.color}">
-        <div class="row"><div class="dur-n"><b class="num">${d.days}</b><small>${T('days')}</small></div><div class="grow"><b>${E(Lx(d.label))}</b><small class="muted num">${money(pr.perMeal)} / ${T('perMeal')}</small></div>
+        <div class="row"><div class="dur-n"><b class="num">${d.days}</b><small>${T('days')}</small></div><div class="grow"><b>${E(Lx(d.label))}</b><small class="muted num">${T('mealsN', { n: pr.meals })} · <b>${money(pr.total)}</b></small></div>
         ${d.discount ? `<span class="chip chip-brand">${T('save_')} <span class="num">${Math.round(d.discount * 100)}%</span></span>` : ''}<span class="radio"></span></div></button>`;
     }).join('')}</div>`;
   }
@@ -537,7 +537,7 @@
           ${w.allergies.length ? `<div class="row">🛡️<span class="grow small">${allergenNames(w.allergies).join('، ')}</span></div>` : ''}
         </div></div>
       <div class="card pad price-box">
-        ${line(`${T('mealsN', { n: pr.meals })} × ${money(t.pricePerMeal)}`, money(pr.base))}
+        ${line(`${T('subPrice')} (${T('mealsN', { n: pr.meals })})`, money(pr.base))}
         ${pr.durDisc ? line(T('durationDisc'), '−' + money(pr.durDisc), 'green') : ''}
         ${pr.optDisc ? line(T('bothDisc'), '−' + money(pr.optDisc), 'green') : ''}
         ${line(T('deliveryFee'), pr.deliveryFee ? money(pr.deliveryFee) : T('free'), pr.deliveryFee ? '' : 'green')}
@@ -546,7 +546,7 @@
         ${w.promoMsg ? `<p class="small ${w.promoApplied ? 'green' : 'err'}">${E(w.promoMsg)}</p>` : ''}
         <div class="hr"></div>
         <div class="row between total"><b>${T('total')}</b><b class="num">${money(pr.total)}</b></div>
-        <div class="row between tiny muted"><span>${T('vatIncl')} (${money(pr.vat)})</span><span>${T('perMealAvg')}: <span class="num">${money(pr.perMeal)}</span></span></div>
+        <div class="row between tiny muted"><span>${T('vatIncl')} (${money(pr.vat)})</span></div>
       </div>
       <h3>${T('payMethod')}</h3>
       <div class="pay-list">${methods.map(([id, ic, l]) => `<button class="pay-m ${w.pay === id ? 'on' : ''}" data-a="wizSet" data-k="pay" data-v="${id}"><span class="pm-ic ${id}">${id === 'applepay' ? '<b>Pay</b>' : id === 'ideal' ? '<b>iD</b>' : ic}</span><b class="grow">${l}</b><span class="radio"></span></button>
