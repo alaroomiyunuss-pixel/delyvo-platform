@@ -1,0 +1,1 @@
+{"name":"delyvo-customer-ios","private":true,"version":"1.0.0","scripts":{"build:web":"node build-web.js","sync":"node build-web.js && npx cap sync ios"},"dependencies":{"@capacitor/cli":"^8.5.2","@capacitor/core":"^8.5.2","@capacitor/ios":"^8.5.2"}}

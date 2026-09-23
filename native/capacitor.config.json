@@ -1,0 +1,7 @@
+{
+  "appId": "nl.delyvo.app",
+  "appName": "Delyvo",
+  "webDir": "www",
+  "backgroundColor": "#F4F7F5",
+  "ios": { "contentInset": "never", "backgroundColor": "#F4F7F5", "scheme": "Delyvo", "limitsNavigationsToAppBoundDomains": false }
+}

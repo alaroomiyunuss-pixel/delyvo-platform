@@ -1,0 +1,45 @@
+name: iOS → TestFlight (customer app)
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Select latest Xcode 26
+        run: |
+          X=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1); echo "Using $X"; sudo xcode-select -s "$X"; xcodebuild -version
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Bundle web app
+        working-directory: native
+        run: npm ci && node build-web.js && npx cap sync ios
+      - name: Signing setup
+        env:
+          P12: ${{ secrets.DIST_P12_BASE64 }}
+          P12_PASS: ${{ secrets.DIST_P12_PASSWORD }}
+          PROFILE: ${{ secrets.PROFILE_BASE64 }}
+          ASC_KEY: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          KC=$RUNNER_TEMP/build.keychain-db
+          security create-keychain -p ci $KC && security set-keychain-settings -lut 3600 $KC && security unlock-keychain -p ci $KC
+          echo "$P12" | base64 -d > $RUNNER_TEMP/dist.p12
+          security import $RUNNER_TEMP/dist.p12 -k $KC -P "$P12_PASS" -T /usr/bin/codesign -T /usr/bin/security
+          curl -sfL https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer -o $RUNNER_TEMP/wwdr.cer && security import $RUNNER_TEMP/wwdr.cer -k $KC || true
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ci $KC
+          security list-keychains -d user -s $KC $(security list-keychains -d user | tr -d '"')
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          echo "$PROFILE" | base64 -d > "$HOME/Library/MobileDevice/Provisioning Profiles/delyvo.mobileprovision"
+          mkdir -p ~/.appstoreconnect/private_keys && echo "$ASC_KEY" > ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8
+          echo "KC=$KC" >> $GITHUB_ENV
+      - name: Archive & export
+        working-directory: native
+        run: |
+          BUILD=$((100 + GITHUB_RUN_NUMBER))
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
+            -archivePath build/Delyvo.xcarchive archive CURRENT_PROJECT_VERSION=$BUILD OTHER_CODE_SIGN_FLAGS="--keychain $KC" | tail -5
+          xcodebuild -exportArchive -archivePath build/Delyvo.xcarchive -exportPath build/export -exportOptionsPlist ExportOptions.plist | tail -3
+      - name: Upload to TestFlight
+        working-directory: native
+        run: xcrun altool --upload-app -f build/export/App.ipa -t ios --apiKey ${{ secrets.ASC_KEY_ID }} --apiIssuer ${{ secrets.ASC_ISSUER_ID }}
