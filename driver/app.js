@@ -66,8 +66,37 @@
       profile: 'Profiel', vehicle: 'Voertuig', zone: 'Gebied', phone: 'Telefoon', plate: 'Kenteken', language: 'Taal', support: 'Contact met support', logout: 'Uitloggen',
       readOnly: 'Alleen lezen', now: 'nu', minAgo: '{n} min geleden', hAgo: '{n} u geleden', driverApp: 'Bezorgers-app', version: 'Demoversie 1.0',
       byHand: 'Aan klant gegeven', byDoor: 'Bij de deur gezet', meal: 'maaltijd', restaurant: 'Restaurant', photoAdded: 'Foto toegevoegd'
+    },
+    en: {
+      appName: 'Delyvo Driver', chooseAccount: 'Choose your account', enterPin: 'Enter your PIN', pinHint: 'Demo codes: 1111 · 2222 · 3333',
+      wrongPin: 'Incorrect PIN', loginSub: 'Pick up from restaurants, deliver to subscribers.', back: 'Back',
+      tabToday: 'Today', tabRoute: 'Route', tabEarn: 'Earnings', tabNotif: 'Alerts', tabProfile: 'Profile',
+      morning: 'Good morning', afternoon: 'Good afternoon', today: 'Today', tomorrow: 'Tomorrow',
+      online: 'Online', offline: 'Offline', onlineSub: 'Receiving orders — tap to pause', offlineSub: 'No new orders — tap to go online',
+      goOnlineFirst: 'Go online first to start', stopsDone: 'Stops delivered', stops: 'Stops', meals: 'Meals', pickupsLeft: 'Pickups left',
+      next: 'Next task', nextPickup: 'Pick up at {n}', nextStop: 'Deliver to {n}', allDone: 'All of today’s deliveries done — great job!',
+      pickups: 'Restaurant pickups', deliveries: 'Deliveries', orders: 'orders', readyOf: '{r} of {t} ready',
+      pickedAll: 'Picked up all', pickReady: 'Pick up ready only', waitRest: 'Waiting for restaurant', pickedDone: 'Picked up',
+      navigate: 'Navigate', call: 'Call', startDelivery: 'Start delivery', delivered: 'Delivered', failed: 'Can’t deliver',
+      waitingPickup: 'Awaiting pickup', bags: 'bags', bag: 'bag', noOrders: 'No orders assigned to you', noOrdersSub: 'You’ll get a notification as soon as dispatch assigns orders.',
+      tomorrowRO: 'Tomorrow’s preview — read only', tomorrowEmpty: 'Nothing assigned for tomorrow yet', tomorrowEmptySub: 'Routes are usually assigned the evening before.',
+      st_waiting: 'Awaiting pickup', st_picked: 'Ready to deliver', st_on_way: 'On the way', st_delivered: 'Delivered', st_failed: 'Failed',
+      proofTitle: 'Confirm delivery', proofPhoto: 'Photo proof (optional)', takePhoto: 'Take photo', retake: 'Retake', handoff: 'Handoff',
+      toCustomer: 'Handed to customer', atDoor: 'Left at the door', confirm: 'Confirm delivery', cancel: 'Cancel',
+      failTitle: 'Delivery failed', failSub: 'Pick a reason — support will contact the customer right away.', r_noanswer: 'Customer not answering', r_address: 'Wrong address',
+      r_closed: 'Building closed', r_other: 'Other', otherPh: 'Describe the reason…', sendFail: 'Report',
+      toastPicked: 'Picked up', toastOnWay: 'Delivery started', toastOnWaySub: 'Customer notified you’re on the way', toastDelivered: 'Delivered', toastFailed: 'Failed delivery reported',
+      items: 'Meals', history: 'History', address: 'Address', notes: 'Delivery notes', window: 'Delivery window', orderNo: 'Order no.', proof: 'Proof of delivery',
+      routeTitle: 'Today’s route', routeSub: 'Restaurants first, then customers in order', openRoute: 'Open full route in Google Maps', pickupAt: 'Pickup', dropAt: 'Drop-off',
+      routeEmpty: 'No route yet', earnTitle: 'Earnings', thisWeek: 'Last 7 days', estEarn: 'Estimated earnings', perStop: '{m} per stop', delivStops: 'Stops delivered',
+      delivMeals: 'Meals delivered', rating: 'Rating', soon: 'Coming soon', payout: 'Paid out weekly every Monday', todayEarn: 'Today',
+      notifTitle: 'Notifications', markAll: 'Mark all as read', noNotif: 'No notifications',
+      profile: 'Profile', vehicle: 'Vehicle', zone: 'Zone', phone: 'Phone', plate: 'Plate', language: 'Language', support: 'Contact support', logout: 'Log out',
+      readOnly: 'Read only', now: 'now', minAgo: '{n} min ago', hAgo: '{n} h ago', driverApp: 'Driver app', version: 'Demo version 1.0',
+      byHand: 'Handed to customer', byDoor: 'Left at the door', meal: 'meal', restaurant: 'Restaurant', photoAdded: 'Photo added'
     }
   };
+  const LANGS = [['ar', 'العربية'], ['nl', 'NL'], ['en', 'EN']];
   function t(k, vars) {
     let s = (T[lang] && T[lang][k]) || T.ar[k] || k;
     if (vars) Object.keys(vars).forEach((v) => { s = s.replace('{' + v + '}', vars[v]); });
@@ -75,9 +104,9 @@
   }
 
   const VEHICLES = {
-    'e-bike': { ar: 'دراجة كهربائية', nl: 'E-bike', ic: '🚲' },
-    car: { ar: 'سيارة', nl: 'Auto', ic: '🚗' },
-    scooter: { ar: 'سكوتر', nl: 'Scooter', ic: '🛵' }
+    'e-bike': { ar: 'دراجة كهربائية', nl: 'E-bike', en: 'E-bike', ic: '🚲' },
+    car: { ar: 'سيارة', nl: 'Auto', en: 'Car', ic: '🚗' },
+    scooter: { ar: 'سكوتر', nl: 'Scooter', en: 'Scooter', ic: '🛵' }
   };
   const AV_COLORS = ['#1FA06B', '#2563EB', '#D97706', '#7C3AED', '#0891B2'];
 
@@ -143,6 +172,9 @@
   const initials = (n) => String(n || '?').split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
   const avColor = (id) => AV_COLORS[(parseInt(String(id).replace(/\D/g, ''), 10) || 0) % AV_COLORS.length];
   const statusLabel = (s) => (DV.STATUS[s] ? DV.STATUS[s][lang] || DV.STATUS[s].ar : s);
+  // fail reasons are stored in Arabic (see failSheet) — show known ones in the current language
+  const REASONS = ['r_noanswer', 'r_address', 'r_closed', 'r_other'];
+  const noteText = (note) => { const k = REASONS.find((r) => T.ar[r] === note); return k ? t(k) : note; };
   const statusPill = (s) => `<span class="status-pill" style="color:${(DV.STATUS[s] || {}).color || '#64748B'};background:${((DV.STATUS[s] || {}).color || '#64748B')}14">${E(statusLabel(s))}</span>`;
 
   function stopState(orders) {
@@ -191,6 +223,9 @@
   function applyLang() {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    // desktop side panel (defined in index.html) follows the app language
+    const info = document.querySelector('.stage-info');
+    if (info && window.DRIVER_INFO && info.dataset.lang !== lang) { info.innerHTML = window.DRIVER_INFO[lang] || window.DRIVER_INFO.ar; info.dataset.lang = lang; }
   }
   function setLang(l) {
     lang = l; try { localStorage.setItem(LANG_KEY, l); } catch (e) {}
@@ -206,7 +241,7 @@
     if (!loginPick) {
       body = `<h2 class="lg-h">${t('chooseAccount')}</h2>
         <div class="drv-list">${drivers.map((d) => {
-          const v = VEHICLES[d.vehicle] || { ic: '🚚', ar: d.vehicle, nl: d.vehicle };
+          const v = VEHICLES[d.vehicle] || { ic: '🚚', ar: d.vehicle, nl: d.vehicle, en: d.vehicle };
           return `<button class="drv-card press" data-act="login-driver" data-id="${E(d.id)}">
             <span class="avatar" style="background:${avColor(d.id)}">${E(initials(d.name))}</span>
             <span class="grow"><b>${E(d.name)}</b><small class="muted">${ic('pin', 14)} ${E(d.zone)} · ${v.ic} ${E(v[lang] || v.ar)}</small></span>
@@ -231,7 +266,7 @@
     </div>`;
   }
   function langSeg() {
-    return `<div class="seg seg-sm">${['ar', 'nl'].map((l) => `<button class="${lang === l ? 'on' : ''}" data-act="lang" data-l="${l}">${l === 'ar' ? 'العربية' : 'NL'}</button>`).join('')}</div>`;
+    return `<div class="seg seg-sm">${LANGS.map(([l, lbl]) => `<button class="${lang === l ? 'on' : ''}" data-act="lang" data-l="${l}" lang="${l}">${lbl}</button>`).join('')}</div>`;
   }
   function pressKey(k) {
     if (pin.length >= 4) return;
@@ -309,7 +344,7 @@
     const C = 2 * Math.PI * 38;
 
     let out = `<div class="large-head">
-      <div class="row between"><div><small class="muted">${E(DV.fmtDate(dayISO(), lang))}</small><h1 class="lt">${greet}، ${E(firstName(d.name))}</h1></div>
+      <div class="row between"><div><small class="muted">${E(DV.fmtDate(dayISO(), lang))}</small><h1 class="lt">${greet}${lang === 'ar' ? '،' : ','} ${E(firstName(d.name))}</h1></div>
       <button class="avatar-btn press" data-act="tab" data-tab="profile" style="background:${avColor(d.id)}">${E(initials(d.name))}</button></div>
       <div class="seg day-seg">${['today', 'tomorrow'].map((m) => `<button class="${dayMode === m ? 'on' : ''}" data-act="day" data-d="${m}">${t(m)}</button>`).join('')}</div>
     </div>`;
@@ -482,7 +517,7 @@
           ${proofO ? `<img src="${E(proofO.proof)}" alt="proof">` : ''}<div><b>${handO ? (handO.handoff === 'door' ? t('byDoor') : t('byHand')) : ''}</b></div></div>` : ''}
         <div class="sec-h"><h3>${t('history')}</h3></div>
         <div class="card pad timeline">${hist.map((h) => `<div class="tl-i"><i style="background:${(DV.STATUS[h.s] || {}).color || '#94A3B8'}"></i>
-          <div class="grow"><b>${E(statusLabel(h.s))}</b> <span class="muted small num">${E(h.no)}</span>${h.note ? `<small class="muted">${E(h.note)}</small>` : ''}</div>
+          <div class="grow"><b>${E(statusLabel(h.s))}</b> <span class="muted small num">${E(h.no)}</span>${h.note ? `<small class="muted">${E(noteText(h.note))}</small>` : ''}</div>
           <span class="muted tiny num">${E(DV.fmtTime(h.at, lang))}</span></div>`).join('')}</div>
         <div class="end-space"></div>
       </div></div>
@@ -585,7 +620,7 @@
   // ---------------------------------------------------------------- PROFILE
   function viewProfile() {
     const d = me();
-    const v = VEHICLES[d.vehicle] || { ic: '🚚', ar: d.vehicle, nl: d.vehicle };
+    const v = VEHICLES[d.vehicle] || { ic: '🚚', ar: d.vehicle, nl: d.vehicle, en: d.vehicle };
     return `<div class="prof-hero">
         <span class="avatar xl" style="background:${avColor(d.id)}">${E(initials(d.name))}</span>
         <h2>${E(d.name)}</h2>
@@ -669,7 +704,7 @@
 
   function failSheet(key) {
     const s = stopByKey(key); if (!s) return;
-    const reasons = ['r_noanswer', 'r_address', 'r_closed', 'r_other'];
+    const reasons = REASONS;
     let pick = null;
     openSheet(`<h3 class="sh-t">${t('failTitle')}</h3><p class="muted small">${t('failSub')}</p>
       <div class="reasons">${reasons.map((r) => `<button class="reason press-soft" data-r="${r}"><span class="rd"></span>${t(r)}</button>`).join('')}</div>
@@ -686,11 +721,11 @@
       sheet.querySelector('[data-x=cancel]').addEventListener('click', close);
       ok.addEventListener('click', () => {
         const cur = stopByKey(key); if (!cur) { close(); return; }
-        const reason = pick === 'r_other' ? txt.value.trim() : T.ar[pick];
+        const reason = pick === 'r_other' ? txt.value.trim() : T.ar[pick]; // stored in Arabic for support/admin
         const ids = cur.orders.filter((o) => !FINAL.includes(o.status)).map((o) => o.id);
         if (ids.length) DV.setOrderStatus(ids, 'failed', { by: 'driver:' + did, reason });
         close(); DVUI.vibrate([80, 50, 80]);
-        DVUI.toast(t('toastFailed'), reason, '⚠️');
+        DVUI.toast(t('toastFailed'), pick === 'r_other' ? reason : t(pick), '⚠️');
       });
     });
   }

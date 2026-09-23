@@ -13,7 +13,7 @@
     get(k) { try { return localStorage.getItem('delyvo.restaurant.' + k); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem('delyvo.restaurant.' + k, v); } catch (e) {} }
   };
-  let lang = pref.get('lang') === 'nl' ? 'nl' : 'ar';
+  let lang = ['nl', 'en'].includes(pref.get('lang')) ? pref.get('lang') : 'ar';
   let soundOn = pref.get('sound') !== '0';
   let rid = null;
   let markSeen = () => {};
@@ -39,7 +39,7 @@
       nav_board: 'الطلبات', nav_prep: 'ملخص التحضير', nav_labels: 'الاستكرات', nav_menu: 'قائمتي', nav_stats: 'الأداء',
       sub_board: 'لوحة الطلبات حسب الحالة', sub_prep: 'الكميات المطلوبة لكل وجبة', sub_labels: 'طباعة ملصقات الوجبات والأكياس', sub_menu: 'وجباتك المعروضة للعملاء', sub_stats: 'الأرقام والتقييمات والمستحقات',
       today: 'اليوم', tomorrow: 'غداً', after: 'بعد غد', logout: 'تسجيل الخروج',
-      col_scheduled: 'جديدة', col_accepted: 'مقبولة', col_preparing: 'قيد التحضير', col_ready: 'جاهزة للتسليم', col_done: 'تم الاستلام',
+      col_scheduled: 'مؤكدة — بانتظار التحضير', col_accepted: 'مؤكدة', col_preparing: 'قيد التحضير', col_ready: 'جاهزة للتسليم', col_done: 'تم الاستلام',
       accept: 'قبول', start_prep: 'بدء التحضير', mark_ready: 'جاهز', accept_all: 'قبول الكل', prep_all: 'بدء تحضير الكل', ready_all: 'تجهيز الكل',
       all: 'الكل', lunch: 'غداء', dinner: 'عشاء', search: 'ابحث برقم الطلب أو اسم العميل أو الوجبة…',
       chef: 'اختيار الشيف', printed: 'تمت طباعة الاستكر', not_printed: 'غير مطبوع', empty_col: 'لا توجد طلبات هنا',
@@ -80,7 +80,7 @@
       nav_board: 'Bestellingen', nav_prep: 'Productielijst', nav_labels: 'Etiketten', nav_menu: 'Mijn menu', nav_stats: 'Prestaties',
       sub_board: 'Bestellingen per status', sub_prep: 'Aantallen per gerecht', sub_labels: 'Maaltijd- en tasetiketten printen', sub_menu: 'Je gerechten voor klanten', sub_stats: 'Cijfers, beoordelingen en uitbetaling',
       today: 'Vandaag', tomorrow: 'Morgen', after: 'Overmorgen', logout: 'Uitloggen',
-      col_scheduled: 'Nieuw', col_accepted: 'Geaccepteerd', col_preparing: 'In bereiding', col_ready: 'Klaar voor ophalen', col_done: 'Opgehaald',
+      col_scheduled: 'Bevestigd — te bereiden', col_accepted: 'Bevestigd', col_preparing: 'In bereiding', col_ready: 'Klaar voor ophalen', col_done: 'Opgehaald',
       accept: 'Accepteren', start_prep: 'Start bereiding', mark_ready: 'Klaar', accept_all: 'Alles accepteren', prep_all: 'Alles starten', ready_all: 'Alles klaar',
       all: 'Alles', lunch: 'Lunch', dinner: 'Diner', search: 'Zoek op bestelnr., klant of gerecht…',
       chef: 'Keuze van de chef', printed: 'Etiket geprint', not_printed: 'Niet geprint', empty_col: 'Geen bestellingen',
@@ -111,10 +111,62 @@
       new_orders: 'Nieuwe bestellingen',
       l_alg: 'Allergenen', l_cust: '⚠ Allergie klant', l_prod: 'Productiedatum', l_exp: 'Houdbaar tot', l_cold: 'Gekoeld bewaren 0–4°C', l_none: 'Geen',
       bag: 'Bezorgtas', bag_items: (n) => `${n} maaltijd(en) in de tas`
+    },
+    en: {
+      app: 'Restaurant panel', partner: 'Partner portal',
+      login_h: 'Partner restaurant login', login_sub: 'Choose your restaurant and enter your PIN to open the kitchen panel',
+      pick_r: 'Choose restaurant', pin: 'PIN', pin_hint: 'Demo PIN: 1234', enter: 'Log in', wrong_pin: 'Incorrect PIN', choose_first: 'Choose a restaurant first',
+      login_foot: 'Demo data — live-synced with the customer, driver and admin apps',
+      nav_board: 'Orders', nav_prep: 'Prep list', nav_labels: 'Labels', nav_menu: 'My menu', nav_stats: 'Performance',
+      sub_board: 'Orders by status', sub_prep: 'Quantities per dish', sub_labels: 'Print meal and bag labels', sub_menu: 'Your dishes shown to customers', sub_stats: 'Numbers, ratings and payout',
+      today: 'Today', tomorrow: 'Tomorrow', after: 'Day after', logout: 'Log out',
+      col_scheduled: 'Confirmed — to prepare', col_accepted: 'Confirmed', col_preparing: 'Preparing', col_ready: 'Ready for pickup', col_done: 'Picked up',
+      accept: 'Accept', start_prep: 'Start prep', mark_ready: 'Ready', accept_all: 'Accept all', prep_all: 'Start all', ready_all: 'All ready',
+      all: 'All', lunch: 'Lunch', dinner: 'Dinner', search: 'Search by order no., customer or dish…',
+      chef: "Chef's pick", printed: 'Label printed', not_printed: 'Not printed', empty_col: 'No orders here',
+      conflict: 'Conflicts with dish!', waiting_driver: 'Waiting for driver', driver: 'Driver', no_driver: 'No driver assigned yet',
+      k_total: 'Total meals', k_lunch: 'Lunch', k_dinner: 'Dinner', k_alg: 'Allergy alerts', k_unprinted: 'No label', k_ready: 'Ready/picked up',
+      print_unprinted: 'Unprinted only', print_selected: 'Print labels', preview: 'Preview', bag_labels: 'Bag labels', with_bags: 'Add a bag label per customer',
+      select_all: 'Select all', selected: (n) => `${n} selected`, size: 'Label size', f_all: 'All', f_unprinted: 'Unprinted', f_printed: 'Printed',
+      th_no: 'Order no.', th_slot: 'Meal', th_window: 'Time window', th_cust: 'Customer', th_meal: 'Dish', th_status: 'Status', th_printed: 'Label',
+      no_orders: 'No orders for this day', no_orders_sub: 'Orders appear here as soon as customers pick your dishes',
+      nothing_sel: 'Select at least one order', nothing_unprinted: 'All labels are printed ✓',
+      prev_h: 'Label preview', prev_bags_h: 'Bag label preview', print: 'Print', close: 'Close', labels_n: (n) => `${n} label${n === 1 ? '' : 's'}`,
+      printed_ok: 'Orders marked as printed', printed_ok_sub: (n) => `${n} label${n === 1 ? '' : 's'}`,
+      prep_h: 'Prep list', prep_meal: 'Dish', total: 'Total', kcal: 'kcal', print_prep: 'Print list',
+      special: 'Special notes — customer allergies', special_none: 'No customer allergies recorded for this day', cust_alg: 'Customer allergy', meal_contains: 'Dish contains',
+      prep_status: 'Progress', generated: 'Generated at',
+      menu_h: 'My menu', active_of: (a, b) => `${a} of ${b} dishes active`, menu_note: 'Inactive dishes disappear from the customer app immediately and are never picked by the chef.',
+      plans: 'Plans', allergens: 'Allergens', none: 'None', edit: 'Edit', active: 'Active', inactive: 'Inactive', reviews: 'reviews',
+      edit_h: 'Edit dish', protein: 'Protein (g)', carbs: 'Carbs (g)', fat: 'Fat (g)', kcal_f: 'Energy (kcal)', shelf: 'Shelf life (days)',
+      desc_ar: 'Description (Arabic)', desc_nl: 'Description (Dutch)', desc_en: 'Description (English)', save: 'Save changes', cancel: 'Cancel', saved: 'Dish saved', meal_on: 'Dish active', meal_off: 'Dish inactive — hidden from customers',
+      st_today: 'Orders today', st_done_today: 'Picked up today', st_week: 'Meals delivered (7 days)', st_rating: 'Avg. rating', st_payout: 'Estimated payout', st_month: (m) => `This month · ${m}`,
+      st_chart: 'Meals delivered — last 7 days', st_top: 'Most ordered (30 days)', st_low: 'Low ratings & comments', st_low_none: 'No low ratings — great work 👏',
+      st_payout_calc: (n, p) => `${n} meals × ${p}`, per_meal: 'per meal', no_comment: 'No comment',
+      notif: 'Notifications', mark_all: 'Mark all as read', notif_none: 'No notifications',
+      sound_on: 'Sound on', sound_off: 'Sound off',
+      d_order: 'Order details', d_customer: 'Customer', d_delivery: 'Delivery', d_meal: 'Dish', d_ingr: 'Ingredients', d_history: 'Status history', d_macros: 'Nutrition', d_print: 'Print label',
+      city: 'City', date: 'Date',
+      moved: 'Status updated', moved_n: (n) => `${n} order${n === 1 ? '' : 's'}`,
+      new_orders: 'New orders',
+      l_alg: 'Allergens', l_cust: '⚠ Customer allergy', l_prod: 'Produced', l_exp: 'Best before', l_cold: 'Keep refrigerated 0–4°C', l_none: 'None',
+      bag: 'Delivery bag', bag_items: (n) => `${n} meal${n === 1 ? '' : 's'} in the bag`
     }
   };
+  // strings used outside the dictionaries above
+  Object.assign(T.ar, { desc_en: 'الوصف (إنجليزي)', new_tag: 'جديد', m_protein: 'بروتين', m_carbs: 'كارب', m_fat: 'دهون', title: 'لوحة المطعم',
+    lbl_note: 'حدّد الطلبات ثم اطبع — كل استكر فيه رقم الطلب، اسم العميل، الوجبة بالعربي والهولندي، القيم الغذائية، مسببات الحساسية، تاريخ الإنتاج والصلاحية، وكود QR.' });
+  Object.assign(T.nl, { desc_en: 'Omschrijving (Engels)', new_tag: 'Nieuw', m_protein: 'Eiwit', m_carbs: 'Koolh.', m_fat: 'Vet', title: 'Restaurantpaneel',
+    lbl_note: 'Selecteer bestellingen en print — elk etiket bevat bestelnr., klant, gerecht (AR + NL), voedingswaarde, allergenen, productie- en houdbaarheidsdatum en een QR-code.' });
+  Object.assign(T.en, { new_tag: 'New', m_protein: 'Protein', m_carbs: 'Carbs', m_fat: 'Fat', title: 'Restaurant panel',
+    lbl_note: 'Select orders and print — each label shows the order no., customer, dish (EN + NL), nutrition, allergens, production and best-before dates, and a QR code.' });
+  const LANGS = ['ar', 'nl', 'en'];
+  const LANG_TAG = { ar: 'ع', nl: 'NL', en: 'EN' };
   function t(k, ...a) { const v = (T[lang] && T[lang][k] !== undefined) ? T[lang][k] : (T.ar[k] !== undefined ? T.ar[k] : k); return typeof v === 'function' ? v(...a) : v; }
-  const LOCALE = () => (lang === 'nl' ? 'nl-NL' : 'ar-u-nu-latn');
+  const LOCALE = () => ({ nl: 'nl-NL', en: 'en-GB' }[lang] || 'ar-u-nu-latn');
+  /** Secondary language shown next to the primary one (menu cards, prep list, drawer). */
+  const altLang = () => (lang === 'nl' ? 'ar' : 'nl');
+  const langSeg = () => `<div class="seg lang-seg" role="group" aria-label="AR / NL / EN">${LANGS.map((l) => `<button class="${lang === l ? 'on' : ''}" data-act="lang" data-l="${l}" lang="${l}">${LANG_TAG[l]}</button>`).join('')}</div>`;
 
   // ---------------------------------------------------------------- icons (stroke, lucide-style)
   const IC = {
@@ -151,8 +203,8 @@
   const R = () => DV.restaurant(rid) || {};
   const DONE = ['picked', 'on_way', 'delivered', 'failed'];
   const COLS = [
-    { id: 'scheduled', st: ['scheduled'], next: 'accepted', btn: 'accept', bulk: 'accept_all' },
-    { id: 'accepted', st: ['accepted'], next: 'preparing', btn: 'start_prep', bulk: 'prep_all' },
+    // orders arrive already confirmed — restaurants don't accept/reject (partner agreement)
+    { id: 'scheduled', st: ['scheduled', 'accepted'], next: 'preparing', btn: 'start_prep', bulk: 'prep_all' },
     { id: 'preparing', st: ['preparing'], next: 'ready', btn: 'mark_ready', bulk: 'ready_all' },
     { id: 'ready', st: ['ready'], next: null },
     { id: 'done', st: DONE, next: null }
@@ -171,7 +223,7 @@
       if (ui.slot !== 'all' && o.slot !== ui.slot) return false;
       if (!q) return true;
       const m = DV.meal(o.mealId) || {}, c = DV.customer(o.customerId) || {};
-      return [o.no, c.name, DV.L(m.name, 'ar'), DV.L(m.name, 'nl')].some((s) => String(s || '').toLowerCase().includes(q));
+      return [o.no, c.name, DV.L(m.name, 'ar'), DV.L(m.name, 'nl'), DV.L(m.name, 'en')].some((s) => String(s || '').toLowerCase().includes(q));
     });
   }
   const winLabel = (id) => { const w = (DV.state.settings.deliveryWindows || []).find((x) => x.id === id); return w ? DV.L(w.label, lang) : (id || '—'); };
@@ -234,7 +286,7 @@
         <div class="l-info">
           <div class="l-cust">${esc(c.name || '—')}</div>
           <div class="l-date">${esc(DV.fmtDate(o.date, lang, { weekday: 'short', day: 'numeric', month: 'short' }))} · <span class="num">${esc(winTime(o.window))}</span></div>
-          <div class="l-meal" dir="rtl">${esc(DV.L(m.name, 'ar'))}</div>
+          <div class="l-meal" dir="${lang === 'en' ? 'ltr' : 'rtl'}">${esc(DV.L(m.name, lang === 'en' ? 'en' : 'ar'))}</div>
           <div class="l-meal-nl" dir="ltr">${esc(DV.L(m.name, 'nl'))}</div>
           <div class="l-mac num" dir="ltr">${m.kcal || 0} kcal · P ${m.protein || 0}g · C ${m.carbs || 0}g · F ${m.fat || 0}g</div>
         </div>
@@ -311,7 +363,7 @@
       return { o, c, m, ca, conflict: ca.filter((a) => (m.allergens || []).includes(a)) };
     });
     const byStatus = {};
-    list.forEach((o) => { const k = DONE.includes(o.status) ? 'done' : o.status; byStatus[k] = (byStatus[k] || 0) + 1; });
+    list.forEach((o) => { const k = DONE.includes(o.status) ? 'done' : o.status === 'accepted' ? 'scheduled' : o.status; byStatus[k] = (byStatus[k] || 0) + 1; });
     return { list, rows, notes, byStatus, lunch: list.filter((o) => o.slot === 'lunch').length, dinner: list.filter((o) => o.slot === 'dinner').length };
   }
   function prepSheet(date, forPrint) {
@@ -325,7 +377,7 @@
     const table = d.rows.length ? `<table class="tbl prep-tbl">
       <thead><tr><th>${esc(t('prep_meal'))}</th><th class="c">${esc(t('kcal'))}</th><th class="c">☀️ ${esc(t('lunch'))}</th><th class="c">🌙 ${esc(t('dinner'))}</th><th class="c">${esc(t('total'))}</th></tr></thead>
       <tbody>${d.rows.map((x) => `<tr>
-        <td><div class="row">${forPrint ? '' : `<img class="thumb" src="${esc(x.m.img)}" alt="">`}<div class="grow"><b>${esc(DV.L(x.m.name, lang))}</b><div class="tiny muted">${esc(DV.L(x.m.name, lang === 'ar' ? 'nl' : 'ar'))}${(x.m.allergens || []).length ? ' · ' + x.m.allergens.map((a) => esc(algName(a))).join(', ') : ''}</div></div></div></td>
+        <td><div class="row">${forPrint ? '' : `<img class="thumb" src="${esc(x.m.img)}" alt="">`}<div class="grow"><b>${esc(DV.L(x.m.name, lang))}</b><div class="tiny muted">${esc(DV.L(x.m.name, altLang()))}${(x.m.allergens || []).length ? ' · ' + x.m.allergens.map((a) => esc(algName(a))).join(', ') : ''}</div></div></div></td>
         <td class="c num">${x.m.kcal || 0}</td><td class="c num">${x.lunch || '–'}</td><td class="c num">${x.dinner || '–'}</td><td class="c num bold big">${x.lunch + x.dinner}</td></tr>`).join('')}</tbody>
       <tfoot><tr><td>${esc(t('total'))}</td><td></td><td class="c num">${d.lunch}</td><td class="c num">${d.dinner}</td><td class="c num big">${d.list.length}</td></tr></tfoot>
     </table>` : emptyHTML();
@@ -353,7 +405,7 @@
       <div class="login-card fade-up">
         <div class="login-top">
           <img src="../assets/img/logo.png" alt="Delyvo" class="login-logo">
-          <button class="btn btn-ghost btn-sm" data-act="lang">${icon('globe', 16)} ${lang === 'ar' ? 'Nederlands' : 'العربية'}</button>
+          ${langSeg()}
         </div>
         <span class="eyebrow">${esc(t('partner'))}</span>
         <h1>${esc(t('login_h'))}</h1>
@@ -424,7 +476,7 @@
       <div class="top-r">
         <span class="clock num" id="clock"></span>
         <button class="icon-btn${soundOn ? ' on' : ''}" data-act="sound" title="${esc(soundOn ? t('sound_on') : t('sound_off'))}">${icon(soundOn ? 'soundOn' : 'soundOff', 19)}</button>
-        <button class="icon-btn lang-btn" data-act="lang" title="AR / NL"><b>${lang === 'ar' ? 'NL' : 'ع'}</b></button>
+        ${langSeg()}
         <div class="bell-wrap">
           <button class="icon-btn${unread ? ' ring' : ''}" data-act="bell" aria-label="${esc(t('notif'))}">${icon('bell', 19)}${unread ? `<span class="badge-dot">${unread > 99 ? '99+' : unread}</span>` : ''}</button>
           ${ui.notifOpen ? notifHTML(notes) : ''}
@@ -488,7 +540,7 @@
         <span class="oc-no num">${esc(o.no)}</span>
         <span class="oc-slot s-${esc(o.slot)}">${esc(slotTxt(o.slot))}</span>
         <span class="grow"></span>
-        ${isFresh(o.id) ? `<span class="new-tag">${lang === 'ar' ? 'جديد' : 'Nieuw'}</span>` : ''}
+        ${isFresh(o.id) ? `<span class="new-tag">${esc(t('new_tag'))}</span>` : ''}
         ${o.printed ? `<span class="oc-printed" title="${esc(t('printed'))}">${icon('printer', 14)}${icon('check', 13)}</span>` : ''}
       </div>
       <div class="oc-meal"><img src="${esc(m.img || '')}" alt="" loading="lazy"><div class="grow"><b class="oc-mname">${esc(DV.L(m.name, lang))}</b><small class="muted num">${m.kcal || 0} kcal · P${m.protein || 0}</small></div></div>
@@ -501,7 +553,7 @@
   // ---- prep
   function prepHTML() {
     const d = prepData(ui.date);
-    const steps = ['scheduled', 'accepted', 'preparing', 'ready', 'done'];
+    const steps = ['scheduled', 'preparing', 'ready', 'done'];
     return `<div class="toolbar">
         <div class="prog">${steps.map((s) => { const c = (DV.STATUS[s === 'done' ? 'delivered' : s] || {}).color; return `<span class="prog-i" style="--c:${c}"><i></i>${esc(t('col_' + s))} <b class="num">${d.byStatus[s] || 0}</b></span>`; }).join('')}</div>
         <div class="grow"></div>
@@ -524,7 +576,7 @@
         <div class="lh-ic">${icon('labels', 26)}</div>
         <div class="grow">
           <b>${esc(t('print_selected'))}</b>
-          <p class="muted small">${esc(lang === 'ar' ? 'حدّد الطلبات ثم اطبع — كل استكر فيه رقم الطلب، اسم العميل، الوجبة بالعربي والهولندي، القيم الغذائية، مسببات الحساسية، تاريخ الإنتاج والصلاحية، وكود QR.' : 'Selecteer bestellingen en print — elk etiket bevat bestelnr., klant, gerecht (AR + NL), voedingswaarde, allergenen, productie- en houdbaarheidsdatum en een QR-code.')}</p>
+          <p class="muted small">${esc(t('lbl_note'))}</p>
         </div>
         <div class="lh-actions">
           <label class="field-inline"><span>${esc(t('size'))}</span>
@@ -573,12 +625,12 @@
           <span class="mc-rate">${icon('star', 13)} <b class="num">${(+m.rating || 0).toFixed(1)}</b> <small class="num">(${m.ratingCount || 0})</small></span>
         </div>
         <div class="mc-b">
-          <div class="row between"><div class="grow"><h3>${esc(DV.L(m.name, lang))}</h3><small class="muted">${esc(DV.L(m.name, lang === 'ar' ? 'nl' : 'ar'))}</small></div>
+          <div class="row between"><div class="grow"><h3>${esc(DV.L(m.name, lang))}</h3><small class="muted">${esc(DV.L(m.name, altLang()))}</small></div>
             <label class="switch" title="${esc(m.active ? t('active') : t('inactive'))}"><input type="checkbox" data-chg="meal-active" data-id="${esc(m.id)}" ${m.active ? 'checked' : ''}><i></i></label></div>
           <p class="mc-desc small muted">${esc(DV.L(m.desc, lang))}</p>
           <div class="macros">
-            <div><b class="num">${m.kcal}</b><small>kcal</small></div><div><b class="num">${m.protein}g</b><small>${lang === 'ar' ? 'بروتين' : 'Eiwit'}</small></div>
-            <div><b class="num">${m.carbs}g</b><small>${lang === 'ar' ? 'كارب' : 'Koolh.'}</small></div><div><b class="num">${m.fat}g</b><small>${lang === 'ar' ? 'دهون' : 'Vet'}</small></div>
+            <div><b class="num">${m.kcal}</b><small>kcal</small></div><div><b class="num">${m.protein}g</b><small>${esc(t('m_protein'))}</small></div>
+            <div><b class="num">${m.carbs}g</b><small>${esc(t('m_carbs'))}</small></div><div><b class="num">${m.fat}g</b><small>${esc(t('m_fat'))}</small></div>
           </div>
           <div class="mc-row"><span class="tiny muted">${esc(t('plans'))}</span>${(m.plans || []).map((p) => { const pt = DV.planType(p); return `<span class="chip chip-brand">${esc(pt ? pt.icon + ' ' + DV.L(pt.name, lang) : p)}</span>`; }).join('')}
             ${(m.slots || []).map((s) => `<span class="chip">${esc(slotTxt(s))}</span>`).join('')}</div>
@@ -600,6 +652,7 @@
         </div>
         <label class="field"><span>${esc(t('desc_ar'))}</span><textarea class="textarea" name="desc_ar" dir="rtl">${esc(DV.L(m.desc, 'ar'))}</textarea></label>
         <label class="field"><span>${esc(t('desc_nl'))}</span><textarea class="textarea" name="desc_nl" dir="ltr">${esc(DV.L(m.desc, 'nl'))}</textarea></label>
+        <label class="field"><span>${esc(t('desc_en'))}</span><textarea class="textarea" name="desc_en" dir="ltr">${esc(m.desc && typeof m.desc === 'object' ? (m.desc.en || '') : '')}</textarea></label>
       </div>
       <div class="modal-f"><button type="button" class="btn btn-ghost" data-act="close-modal">${esc(t('cancel'))}</button><button type="submit" class="btn btn-primary">${icon('check', 18)} ${esc(t('save'))}</button></div>
     </form>`;
@@ -671,7 +724,7 @@
         <div class="row">${pill(o.status)}<button class="icon-btn" data-act="close-drawer">${icon('x', 18)}</button></div>
       </div>
       <div class="dr-b">
-        <div class="dr-hero"><img src="${esc(m.img || '')}" alt=""><div class="dr-hero-t"><b>${esc(DV.L(m.name, lang))}</b><small>${esc(DV.L(m.name, lang === 'ar' ? 'nl' : 'ar'))}</small></div></div>
+        <div class="dr-hero"><img src="${esc(m.img || '')}" alt=""><div class="dr-hero-t"><b>${esc(DV.L(m.name, lang))}</b><small>${esc(DV.L(m.name, altLang()))}</small></div></div>
         ${o.auto ? `<div class="chip chip-chef">👨‍🍳 ${esc(t('chef'))}</div>` : ''}
         ${ca.length ? `<div class="alert-box${conflict.length ? ' hard' : ''}">${icon('alert', 20)}<div><b>${esc(t('cust_alg'))}: ${ca.map((a) => esc(algName(a))).join(', ')}</b>${conflict.length ? `<div>${esc(t('meal_contains'))}: ${conflict.map((a) => esc(algName(a))).join(', ')} — ${esc(t('conflict'))}</div>` : ''}</div></div>` : ''}
         <div class="kv">
@@ -731,7 +784,7 @@
   }
   function updateTitle() {
     const unread = rid ? DV.notificationsFor('restaurant:' + rid).filter((n) => !n.read).length : 0;
-    document.title = (unread ? `(${unread}) ` : '') + 'Delyvo · ' + (lang === 'ar' ? 'لوحة المطعم' : 'Restaurantpaneel');
+    document.title = (unread ? `(${unread}) ` : '') + 'Delyvo · ' + t('title');
   }
   function render() {
     if (!HAS_DOM) return;
@@ -862,7 +915,7 @@
     const el = e.target.closest('[data-act]'); if (!el) return;
     const act = el.dataset.act, id = el.dataset.id;
     switch (act) {
-      case 'lang': lang = lang === 'ar' ? 'nl' : 'ar'; pref.set('lang', lang); applyLang(); render(); refreshPreview(); break;
+      case 'lang': if (!LANGS.includes(el.dataset.l) || el.dataset.l === lang) break; lang = el.dataset.l; pref.set('lang', lang); applyLang(); render(); refreshPreview(); break;
       case 'pick-r': ui.loginR = id; ui.pinErr = false; render(); break;
       case 'key':
         if (el.dataset.k === 'del') ui.pin = ui.pin.slice(0, -1);
@@ -921,11 +974,12 @@
     const fd = new FormData(f), id = f.dataset.id;
     const n = (k) => Math.max(0, Math.round(Number(fd.get(k)) || 0));
     const patch = { kcal: n('kcal'), protein: n('protein'), carbs: n('carbs'), fat: n('fat'), shelfDays: Math.max(1, n('shelfDays')),
-      allergens: fd.getAll('alg').filter((a) => DV.ALLERGENS[a]), desc_ar: String(fd.get('desc_ar') || '').trim(), desc_nl: String(fd.get('desc_nl') || '').trim() };
+      allergens: fd.getAll('alg').filter((a) => DV.ALLERGENS[a]), desc_ar: String(fd.get('desc_ar') || '').trim(), desc_nl: String(fd.get('desc_nl') || '').trim(), desc_en: String(fd.get('desc_en') || '').trim() };
     DV.commit((s) => {
       const m = s.meals.find((x) => x.id === id); if (!m) return;
       m.kcal = patch.kcal; m.protein = patch.protein; m.carbs = patch.carbs; m.fat = patch.fat; m.shelfDays = patch.shelfDays; m.allergens = patch.allergens;
       m.desc = Object.assign({}, typeof m.desc === 'object' && m.desc ? m.desc : {}, { ar: patch.desc_ar, nl: patch.desc_nl });
+      if (patch.desc_en) m.desc.en = patch.desc_en; else delete m.desc.en;
     });
     closeModal();
     DVUI.toast(t('saved'), DV.L((DV.meal(id) || {}).name, lang), '💾');
@@ -965,7 +1019,7 @@
   W.DVRestaurant = {
     ui, T, login: (id) => { rid = id; known = null; trackNew(); }, get rid() { return rid; },
     myOrders, prepData, prepSheet, labelHTML, bagHTML, labelsDoc, boardHTML, labelsHTML, menuHTML, statsHTML, statsData, loginHTML, sideHTML, topHTML, drawerBody, editMealHTML, previewHTML,
-    setLang: (l) => { lang = l; }
+    setLang: (l) => { lang = LANGS.includes(l) ? l : 'ar'; }
   };
 
   if (HAS_DOM) {

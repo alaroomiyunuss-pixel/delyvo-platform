@@ -126,7 +126,7 @@
   ];
 
   const settings = {
-    cutoffHour: 20,           // changes for tomorrow allowed until 20:00 today
+    cutoffHour: 24,           // 24 = midnight: changes for a day allowed until 00:00 at the start of that day
     minLeadDays: 1,           // earliest start = tomorrow
     maxPostpones: 6,
     vatRate: 0.09,

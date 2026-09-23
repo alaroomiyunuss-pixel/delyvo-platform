@@ -23,14 +23,14 @@
   <script src="../shared/ui.js"></script>
   <script src="i18n.js"></script>
   <script>
-    DVUI.mountPhone(`
-      <img src="../assets/img/logo.png" alt="Delyvo" style="height:34px">
+    window.DV_INFO = {
+      ar: `<img src="../assets/img/logo.png" alt="Delyvo" style="height:34px">
       <h1>تطبيق العميل</h1>
       <p>نسخة تفاعلية كاملة من تطبيق الجوال. كل شي تسويه هنا يوصل فوراً للوحة المطعم والسائق والأدمن — افتحهم في تبويبات جنب بعض وجرّب.</p>
       <div class="links">
         <a href="../restaurant/" target="_blank">🍳 لوحة المطعم — استقبال الطلبات <small class="muted" style="margin-inline-start:auto">PIN 1234</small></a>
         <a href="../driver/" target="_blank">🛵 تطبيق السائق <small class="muted" style="margin-inline-start:auto">PIN 1111</small></a>
-        <a href="../admin/" target="_blank">📊 لوحة الأدمن الرئيسية <small class="muted" style="margin-inline-start:auto">admin</small></a>
+        <a href="../admin/" target="_blank">📊 لوحة الأدمن الرئيسية</a>
         <a href="../">🏠 كل التطبيقات</a>
       </div>
       <div class="tips"><b>جرّب:</b><ul>
@@ -38,7 +38,24 @@
         <li>اشترك بباقة جديدة وادفع — تشوف الطلبات تنزل عند المطعم مباشرة</li>
         <li>من «وجباتي»: غيّر وجبة، أجّل يوم، قيّم وجبة</li>
         <li>افتح الموقع من جوالك وأضفه للشاشة الرئيسية ليشتغل كتطبيق</li>
-      </ul></div>`);
+      </ul></div>`,
+      en: `<img src="../assets/img/logo.png" alt="Delyvo" style="height:34px">
+      <h1>Customer app</h1>
+      <p>A fully interactive version of the mobile app. Everything you do here reaches the restaurant, driver and admin panels instantly — open them in tabs side by side and try it.</p>
+      <div class="links">
+        <a href="../restaurant/" target="_blank">🍳 Restaurant panel — incoming orders <small class="muted" style="margin-inline-start:auto">PIN 1234</small></a>
+        <a href="../driver/" target="_blank">🛵 Driver app <small class="muted" style="margin-inline-start:auto">PIN 1111</small></a>
+        <a href="../admin/" target="_blank">📊 Admin panel</a>
+        <a href="../">🏠 All apps</a>
+      </div>
+      <div class="tips"><b>Try:</b><ul>
+        <li>Quick login as "Sara" (active plan) or sign up with a new number — code 1234</li>
+        <li>Subscribe to a new plan and pay — watch the orders land in the restaurant panel</li>
+        <li>In "My meals": swap a meal, postpone a day, rate a meal</li>
+        <li>Open it on your phone and add it to your home screen to use it as an app</li>
+      </ul></div>`
+    };
+    DVUI.mountPhone(DV_INFO[(localStorage.getItem('delyvo.customer.lang') || 'ar') === 'ar' ? 'ar' : 'en']);
   </script>
   <script src="app.js"></script>
 </body>

@@ -238,7 +238,7 @@
     if (!d) return '';
     const t = today();
     const locked = DV.isLocked(d.date);
-    const h = DV.state.settings.cutoffHour;
+    const h = DV.cutoffLabel(lang);
     if (d.status === 'postponed') {
       const moved = sb.days.find((x) => x.movedFrom === d.date);
       return `<section class="day-detail card pad"><div class="row"><span class="big-ic">📅</span><div class="grow"><b>${fd(d.date)}</b><p class="muted small">${T('dayOff')}${moved ? ' → ' + fd(moved.date) : ''}</p></div></div></section>`;
@@ -263,7 +263,7 @@
     const past = d.date < today();
     const slot = `<small class="muted">${DV.SLOTS[sl].icon} ${Lx(DV.SLOTS[sl])}</small>`;
     if (!m) {
-      return `<div class="slot-card empty-slot">${slot}<div class="row"><span class="es-ic">🍽️</span><div class="grow"><b>${T('skipped')}</b><small class="muted">${T('skipHint', { h: DV.state.settings.cutoffHour })}</small></div></div>
+      return `<div class="slot-card empty-slot">${slot}<div class="row"><span class="es-ic">🍽️</span><div class="grow"><b>${T('skipped')}</b><small class="muted">${T('skipHint', { h: DV.cutoffLabel(lang) })}</small></div></div>
         ${!locked ? `<button class="btn btn-primary btn-sm btn-block" data-a="pickerSheet" data-s="${sb.id}" data-d="${d.date}" data-sl="${sl}">${T('chooseMeal')}</button>` : ''}</div>`;
     }
     const col = DV.STATUS[st].color;
@@ -359,7 +359,7 @@
       body = `<div class="pad-x"><div class="list-group" style="margin:0">${[['push', T('pushN')], ['whatsapp', T('waN')], ['email', T('emailN')]].map(([k, l]) => `<label class="list-row"><span class="grow">${l}</span><span class="switch"><input type="checkbox" data-a="notifPref" data-k="${k}" ${np[k] ? 'checked' : ''}><i></i></span></label>`).join('')}</div></div>`;
     } else if (P === 'help') {
       title = T('help');
-      body = `<div class="pad-x">${[1, 2, 3, 4, 5].map((i) => `<div class="faq ${ui.faqOpen === i ? 'open' : ''}"><button data-a="faq" data-i="${i}"><b>${T('faq' + i + 'q')}</b><span>＋</span></button><p>${T('faq' + i + 'a', { h: DV.state.settings.cutoffHour })}</p></div>`).join('')}
+      body = `<div class="pad-x">${[1, 2, 3, 4, 5].map((i) => `<div class="faq ${ui.faqOpen === i ? 'open' : ''}"><button data-a="faq" data-i="${i}"><b>${T('faq' + i + 'q')}</b><span>＋</span></button><p>${T('faq' + i + 'a', { h: DV.cutoffLabel(lang) })}</p></div>`).join('')}
         <a class="btn btn-primary btn-block" style="margin-top:16px" href="https://wa.me/${DV.state.settings.supportWhatsapp.replace(/\D/g, '')}" target="_blank" rel="noopener">🟢 ${T('support')}</a></div>`;
     }
     return `<div class="screen ${ui.anim === 'push' ? 'push' : ''}"><header class="nav"><button class="icon-btn" data-a="pageBack">${back()}</button><h3 class="grow nav-t">${E(title)}</h3><span style="width:40px"></span></header>
@@ -516,7 +516,7 @@
               <div class="pk-img"><img src="${m.img}" alt="" loading="lazy"><button class="pk-info" data-a="mealSheet" data-id="${m.id}" data-ctx="wiz" data-sl="${sl}">${I.info}</button><span class="pk-check">${I.check}</span></div>
               <b>${E(Lx(m.name))}</b><div class="row between tiny"><span class="muted num">${m.kcal} kcal · P${m.protein}</span>${stars(m.rating)}</div></div>`).join('')}</div>`;
         }).join('')}
-        <p class="hint">💡 ${T('skipHint', { h: DV.state.settings.cutoffHour })}</p></div></div>`;
+        <p class="hint">💡 ${T('skipHint', { h: DV.cutoffLabel(lang) })}</p></div></div>`;
   }
   function wPay() {
     const w = ui.wiz; const pr = wPrice(); const dates = wDates(); const slots = wSlots(); const t = DV.planType(w.type);
@@ -765,7 +765,7 @@
     pickDay: (d) => { ui.planDay = d.d; render(); },
     openDay: (d) => { ui.planSub = d.s; ui.planDay = d.d; setTab('plan'); },
     pickerSheet: (d) => openSheet({ type: 'picker', subId: d.s, date: d.d, sl: d.sl }),
-    planPick: (d) => { const ok = DV.setDayMeal(d.s, d.d, d.sl, d.id); ui.sheet = null; if (ok) DVUI.toast(T('saved'), Lx(DV.meal(d.id).name), '✅'); else DVUI.toast(T('locked'), T('lockedSub', { h: DV.state.settings.cutoffHour }), '🔒'); render(); },
+    planPick: (d) => { const ok = DV.setDayMeal(d.s, d.d, d.sl, d.id); ui.sheet = null; if (ok) DVUI.toast(T('saved'), Lx(DV.meal(d.id).name), '✅'); else DVUI.toast(T('locked'), T('lockedSub', { h: DV.cutoffLabel(lang) }), '🔒'); render(); },
     postponeAsk: (d) => openSheet({ type: 'postpone', subId: d.s, date: d.d }),
     postponeDo: (d) => { const r = DV.postponeDay(d.s, d.d); ui.sheet = null; if (r.ok) { ui.planDay = r.newDate; DVUI.toast(T('postponed', { d: fd(r.newDate) }), '', '📅'); } else DVUI.toast(r.reason === 'limit' ? T('limitReached') : T('locked'), '', '⚠️'); render(); },
     rateSheet: (d) => openSheet({ type: 'rate', o: d.o, stars: 0, comment: '' }),
@@ -814,6 +814,8 @@
     $app.querySelectorAll('[data-scroll]').forEach((el) => { scrolls[el.dataset.scroll] = [el.scrollTop, el.scrollLeft]; });
     document.documentElement.lang = lang; document.documentElement.dir = I18N[lang].dir;
     document.body.classList.toggle('lat', lang !== 'ar');
+    const info = document.querySelector('.stage-info'); const il = lang === 'ar' ? 'ar' : 'en';
+    if (info && window.DV_INFO && info.dataset.l !== il) { info.innerHTML = DV_INFO[il]; info.dataset.l = il; info.dir = il === 'ar' ? 'rtl' : 'ltr'; }
     let html;
     if (!me() && !['onboarding', 'login'].includes(ui.view)) ui.view = 'login';
     if (ui.view === 'onboarding') html = vOnboarding();

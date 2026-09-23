@@ -23,7 +23,9 @@
   <script src="../shared/store.js"></script>
   <script src="../shared/ui.js"></script>
   <script>
-    DVUI.mountPhone(`
+    // Desktop side panel — one version per app language; app.js swaps it when the language changes.
+    window.DRIVER_INFO = {
+      ar: `
       <img src="../assets/img/logo.png" alt="Delyvo" style="height:40px;width:auto">
       <h1>تطبيق السائق</h1>
       <p>تطبيق بسيط وخفيف لسائقي Delyvo: يستلم الوجبات من عدّة مطاعم شريكة ثم يوصلها للمشتركين حسب فترة التوصيل. كل شيء متزامن لحظياً مع تطبيق العميل ولوحة المطعم ولوحة الإدارة.</p>
@@ -41,8 +43,47 @@
         <a href="../restaurant/">👨‍🍳 لوحة المطعم <span class="muted small num">(PIN 1234)</span></a>
         <a href="../admin/">📊 لوحة الإدارة</a>
         <a href="../">🏠 الصفحة الرئيسية للعرض</a>
+      </div>`,
+      nl: `
+      <img src="../assets/img/logo.png" alt="Delyvo" style="height:40px;width:auto">
+      <h1>Bezorgers-app</h1>
+      <p>Een simpele, lichte app voor Delyvo-bezorgers: haal maaltijden op bij meerdere partnerrestaurants en bezorg ze per tijdvak bij abonnees. Alles synchroniseert live met de klant-app, het restaurantpaneel en het beheerpaneel.</p>
+      <div class="tips">
+        <b>Probeer het zo:</b>
+        <ul>
+          <li>Log in als bezorger — democodes: <b class="num">1111</b> Khalid (Rotterdam), <b class="num">2222</b> Tom (Den Haag), <b class="num">3333</b> Bilal (Delft).</li>
+          <li>Zet in het restaurantpaneel een bestelling op „Klaar” — je krijgt hier direct een melding.</li>
+          <li>Ophalen bij het restaurant → start bezorging → bezorgd met fotobewijs, en zie de status bij de klant veranderen.</li>
+          <li>Open twee tabbladen naast elkaar om de live-sync te zien.</li>
+        </ul>
       </div>
-    `, { manifest: 'manifest.webmanifest' });
+      <div class="links">
+        <a href="../customer/">📱 Klant-app</a>
+        <a href="../restaurant/">👨‍🍳 Restaurantpaneel <span class="muted small num">(PIN 1234)</span></a>
+        <a href="../admin/">📊 Beheerpaneel</a>
+        <a href="../">🏠 Demo-startpagina</a>
+      </div>`,
+      en: `
+      <img src="../assets/img/logo.png" alt="Delyvo" style="height:40px;width:auto">
+      <h1>Driver app</h1>
+      <p>A simple, lightweight app for Delyvo drivers: pick up meals from several partner restaurants, then deliver them to subscribers by delivery window. Everything syncs live with the customer app, the restaurant panel and the admin panel.</p>
+      <div class="tips">
+        <b>Try it like this:</b>
+        <ul>
+          <li>Log in as a driver — demo codes: <b class="num">1111</b> Khalid (Rotterdam), <b class="num">2222</b> Tom (The Hague), <b class="num">3333</b> Bilal (Delft).</li>
+          <li>In the restaurant panel, mark an order “Ready” — you get an instant alert here.</li>
+          <li>Pick up at the restaurant → start delivery → delivered with photo proof, and watch the status change for the customer.</li>
+          <li>Open two tabs side by side to see the live sync.</li>
+        </ul>
+      </div>
+      <div class="links">
+        <a href="../customer/">📱 Customer app</a>
+        <a href="../restaurant/">👨‍🍳 Restaurant panel <span class="muted small num">(PIN 1234)</span></a>
+        <a href="../admin/">📊 Admin panel</a>
+        <a href="../">🏠 Demo home page</a>
+      </div>`
+    };
+    DVUI.mountPhone(window.DRIVER_INFO.ar, { manifest: 'manifest.webmanifest' });
   </script>
   <script src="app.js"></script>
 </body>

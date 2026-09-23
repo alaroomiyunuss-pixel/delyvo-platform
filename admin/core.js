@@ -6,37 +6,55 @@
 
   // ---------------------------------------------------------------- helpers
   const esc = DV.esc;
-  const L = (v) => DV.L(v, 'ar');
-  const money = (n) => `<span class="num">${esc(DV.money(n, 'ar'))}</span>`;
+  const t = window.I18N.t;
+  const lang = () => window.I18N.lang;
+  const isRTL = () => lang() === 'ar';
+  const L = (v) => DV.L(v, lang());
+  const M = (n) => DV.money(n, lang());
+  const money = (n) => `<span class="num">${esc(M(n))}</span>`;
   const num = (n, d = 0) => `<span class="num">${(+n || 0).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d })}</span>`;
   const sum = (arr, f) => arr.reduce((a, x) => a + (+f(x) || 0), 0);
-  const fdate = (iso, opts) => esc(DV.fmtDate(iso, 'ar', opts || { weekday: 'short', day: 'numeric', month: 'short' }));
-  const fdateLong = (iso) => esc(DV.fmtDate(iso, 'ar'));
-  const ftime = (ts) => `<span class="num">${esc(DV.fmtTime(ts, 'ar'))}</span>`;
+  const D = (iso, opts) => DV.fmtDate(iso, lang(), opts);
+  const fdate = (iso, opts) => esc(D(iso, opts || { weekday: 'short', day: 'numeric', month: 'short' }));
+  const fdateLong = (iso) => esc(D(iso));
+  const ftime = (ts) => `<span class="num">${esc(DV.fmtTime(ts, lang()))}</span>`;
   const fts = (ts) => `${fdate(DV.toISO(new Date(ts)), { day: 'numeric', month: 'short' })} ${ftime(ts)}`;
   function ago(ts) {
     const m = Math.round((Date.now() - ts) / 60000);
-    if (m < 1) return 'الآن';
-    if (m < 60) return `قبل <span class="num">${m}</span> د`;
+    if (m < 1) return t('ago.now');
+    if (m < 60) return t('ago.min', { n: `<span class="num">${m}</span>` });
     const h = Math.round(m / 60);
-    if (h < 24) return `قبل <span class="num">${h}</span> س`;
-    return `قبل <span class="num">${Math.round(h / 24)}</span> يوم`;
+    if (h < 24) return t('ago.hour', { n: `<span class="num">${h}</span>` });
+    return t('ago.day', { n: `<span class="num">${Math.round(h / 24)}</span>` });
   }
+  /** Order statuses. Restaurants no longer accept orders — every order is confirmed automatically,
+      so legacy 'accepted' orders are displayed as 'scheduled' (= "Confirmed"). */
+  const normSt = (st) => (st === 'accepted' ? 'scheduled' : st);
+  const statusKeys = () => Object.keys(DV.STATUS).filter((k) => k !== 'accepted');
+  const stLabel = (st) => { st = normSt(st); return st === 'scheduled' ? t('st.scheduled') : DV.STATUS[st] ? L(DV.STATUS[st]) : st; };
   function pill(status) {
-    const s = DV.STATUS[status]; if (!s) return '';
-    return `<span class="status-pill" style="color:${s.color};background:${s.color}17">${esc(s.ar)}</span>`;
+    const s = DV.STATUS[normSt(status)]; if (!s) return '';
+    return `<span class="status-pill" style="color:${s.color};background:${s.color}17">${esc(stLabel(status))}</span>`;
+  }
+  /** Customer change cutoff: 24 means midnight (00:00) at the start of the delivery day. */
+  const cutoffLabel = (h) => (+h === 24 || +h === 0 ? t('cutoff.midnight') : `${h}:00`);
+  function greeting() {
+    const h = new Date().getHours();
+    return t(h < 12 ? 'dash.hi.morning' : h < 18 ? 'dash.hi.afternoon' : 'dash.hi.evening');
   }
   function stars(n) {
     n = Math.round(n || 0);
     return `<span class="stars" title="${n}/5">${'★'.repeat(n)}<i>${'★'.repeat(5 - n)}</i></span>`;
   }
   const windowLabel = (id) => { const w = DV.state.settings.deliveryWindows.find((x) => x.id === id); return w ? L(w.label) : id || '—'; };
-  const slotLabel = (sl) => DV.SLOTS[sl] ? `${DV.SLOTS[sl].icon} ${DV.SLOTS[sl].ar}` : sl;
-  const PAY = { ideal: 'iDEAL', card: 'بطاقة', applepay: 'Apple Pay', paypal: 'PayPal', klarna: 'Klarna', cash: 'نقداً', wallet: 'المحفظة' };
-  const payLabel = (m) => PAY[m] || m || '—';
-  const WEEKDAYS = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-  const SUB_STATUS = { active: ['فعّال', 'chip-brand'], completed: ['مكتمل', ''], cancelled: ['ملغي', 'chip-danger'], paused: ['موقوف', 'chip-warn'] };
-  const subChip = (st) => { const x = SUB_STATUS[st] || [st, '']; return `<span class="chip ${x[1]}">${esc(x[0])}</span>`; };
+  const slotLabel = (sl) => DV.SLOTS[sl] ? `${DV.SLOTS[sl].icon} ${L(DV.SLOTS[sl])}` : sl;
+  const PAY = { ideal: 'iDEAL', applepay: 'Apple Pay', paypal: 'PayPal', klarna: 'Klarna' };
+  const payLabel = (m, lng) => PAY[m] || (['card', 'cash', 'wallet'].includes(m) ? (lng ? I18N.tIn(lng, 'pay.' + m) : t('pay.' + m)) : m) || '—';
+  /** Weekday names, Sunday first (index = Date#getDay()). */
+  const weekdays = () => t('weekdays').split(',');
+  const weekdayShort = (i) => t('weekdaysShort').split(',')[i];
+  const SUB_STATUS = { active: 'chip-brand', completed: '', cancelled: 'chip-danger', paused: 'chip-warn' };
+  const subChip = (st) => `<span class="chip ${SUB_STATUS[st] || ''}">${esc(SUB_STATUS[st] !== undefined ? t('subst.' + st) : st)}</span>`;
   const initials = (name) => String(name || '?').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
   const avatar = (name, color) => `<span class="avatar" style="${color ? `background:${color}1f;color:${color}` : ''}">${esc(initials(name))}</span>`;
   /** Push a notification inside a DV.commit callback (never call DV actions inside commit — they re-commit). */
@@ -80,7 +98,7 @@
   }
   /** Horizontal bars (HTML). items: [{label, value, color, sub}] */
   function hbars(items, { fmt = (v) => v } = {}) {
-    if (!items.length) return empty('📭', 'لا توجد بيانات');
+    if (!items.length) return empty('📭', t('common.noData'));
     const max = Math.max(1, ...items.map((i) => i.value));
     return `<div class="hbars">${items.map((i) => `
       <div class="hb-row">
@@ -126,11 +144,11 @@
   // ---------------------------------------------------------------- modal
   const modalRoot = () => document.getElementById('modal-root');
   /** Open a modal. body = inner form HTML. onSave(form) → return false to keep open. onInput(form) for live previews. */
-  A.modal = function ({ title, body, wide, saveLabel = 'حفظ', onSave, onInput, onOpen, danger, cancelLabel = 'إلغاء' }) {
+  A.modal = function ({ title, body, wide, saveLabel = t('common.save'), onSave, onInput, onOpen, danger, cancelLabel = t('common.cancel') }) {
     const ov = document.createElement('div');
     ov.className = 'modal-ov';
     ov.innerHTML = `<div class="modal ${wide ? 'wide' : ''}" role="dialog" aria-modal="true">
-      <header class="modal-h"><h3>${esc(title)}</h3><button type="button" class="icon-btn sm" data-x aria-label="إغلاق">✕</button></header>
+      <header class="modal-h"><h3>${esc(title)}</h3><button type="button" class="icon-btn sm" data-x aria-label="${esc(t('common.close'))}">✕</button></header>
       <form class="modal-b" novalidate>${body}</form>
       <footer class="modal-f">
         ${danger ? `<button type="button" class="btn btn-danger btn-sm" data-danger>${esc(danger.label)}</button>` : ''}
@@ -164,19 +182,19 @@
   /** Invalid-field feedback */
   A.invalid = (form, name, msg) => {
     const el = form.elements[name]; if (el && el.classList) { el.classList.add('is-bad'); el.focus(); setTimeout(() => el.classList.remove('is-bad'), 1600); }
-    toast(msg || 'أكمل الحقول المطلوبة', '', '⚠️'); return false;
+    toast(msg || t('common.fillRequired'), '', '⚠️'); return false;
   };
   const field = (label, inner, cls = '') => `<label class="field ${cls}"><span>${esc(label)}</span>${inner}</label>`;
   const inp = (name, value, attrs = '') => `<input ${/class=/.test(attrs) ? '' : 'class="input"'} name="${name}" value="${esc(value ?? '')}" ${attrs}>`;
   const trio = (label, name, obj, attrs = '') => `<div class="trio"><div class="trio-l">${esc(label)}</div>
     <div class="trio-g">
-      <label class="field"><span>عربي</span><input class="input" name="${name}_ar" value="${esc((obj || {}).ar || '')}" dir="rtl" ${attrs}></label>
+      <label class="field"><span>${esc(t('lang.ar'))}</span><input class="input" name="${name}_ar" value="${esc((obj || {}).ar || '')}" dir="rtl" ${attrs}></label>
       <label class="field"><span>Nederlands</span><input class="input lat" name="${name}_nl" value="${esc((obj || {}).nl || '')}" dir="ltr" ${attrs}></label>
       <label class="field"><span>English</span><input class="input lat" name="${name}_en" value="${esc((obj || {}).en || '')}" dir="ltr" ${attrs}></label>
     </div></div>`;
   const trioArea = (label, name, obj) => `<div class="trio"><div class="trio-l">${esc(label)}</div>
     <div class="trio-g">
-      <label class="field"><span>عربي</span><textarea class="textarea" name="${name}_ar" rows="2" dir="rtl">${esc((obj || {}).ar || '')}</textarea></label>
+      <label class="field"><span>${esc(t('lang.ar'))}</span><textarea class="textarea" name="${name}_ar" rows="2" dir="rtl">${esc((obj || {}).ar || '')}</textarea></label>
       <label class="field"><span>Nederlands</span><textarea class="textarea lat" name="${name}_nl" rows="2" dir="ltr">${esc((obj || {}).nl || '')}</textarea></label>
       <label class="field"><span>English</span><textarea class="textarea lat" name="${name}_en" rows="2" dir="ltr">${esc((obj || {}).en || '')}</textarea></label>
     </div></div>`;
@@ -245,7 +263,7 @@
     const main = document.getElementById('main');
     const sec = A.sections[A.ui.route] || A.sections.dashboard;
     keepFocus(main, () => {
-      try { main.innerHTML = sec.render(); } catch (e) { console.error(e); main.innerHTML = `<div class="card pad">حدث خطأ في عرض هذا القسم: ${esc(e.message)}</div>`; }
+      try { main.innerHTML = sec.render(); } catch (e) { console.error(e); main.innerHTML = `<div class="card pad">${esc(t('common.renderError'))}: ${esc(e.message)}</div>`; }
     });
     if (sec.after) sec.after(main);
     A.renderNav();
@@ -271,12 +289,12 @@
     c.hidden = !unread; c.textContent = unread > 99 ? '99+' : unread;
     const pop = document.getElementById('bell-pop');
     if (pop.hidden) return;
-    pop.innerHTML = `<div class="bp-h"><b>الإشعارات</b>${unread ? `<button class="btn btn-ghost btn-xs" data-action="bell-read-all">تعليم الكل كمقروء</button>` : ''}</div>
+    pop.innerHTML = `<div class="bp-h"><b>${esc(t('bell.title'))}</b>${unread ? `<button class="btn btn-ghost btn-xs" data-action="bell-read-all">${esc(t('bell.readAll'))}</button>` : ''}</div>
       <div class="bp-list">${list.length ? list.slice(0, 30).map((n) => `
         <button class="bp-item ${n.read ? '' : 'unread'}" data-action="bell-item" data-id="${n.id}">
           <span class="bp-ic">${esc(n.icon || '🔔')}</span>
           <span class="grow"><b>${esc(L(n.title))}</b><small>${esc(L(n.body))}</small><em class="tiny muted">${ago(n.at)}</em></span>
-        </button>`).join('') : empty('🔕', 'لا توجد إشعارات')}</div>`;
+        </button>`).join('') : empty('🔕', t('bell.empty'))}</div>`;
   };
 
   // ---------------------------------------------------------------- icons
@@ -316,6 +334,6 @@
   A.act['drawer-close'] = () => A.closeDrawer();
   A.go = (route) => { if (location.hash !== '#' + route) location.hash = route; else A.render(); };
 
-  Object.assign(A, { localIds, esc, L, money, num, sum, fdate, fdateLong, ftime, fts, ago, pill, stars, windowLabel, slotLabel, payLabel, WEEKDAYS, subChip,
+  Object.assign(A, { t, lang, isRTL, M, D, normSt, statusKeys, stLabel, cutoffLabel, greeting, localIds, esc, L, money, num, sum, fdate, fdateLong, ftime, fts, ago, pill, stars, windowLabel, slotLabel, payLabel, weekdays, weekdayShort, subChip,
     avatar, note, opt, empty, toast, round2, lineChart, hbars, donut, bar, field, input: inp, trio, trioArea, readTrio, sw, togChip });
 })();

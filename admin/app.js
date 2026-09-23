@@ -1,12 +1,12 @@
-/* Delyvo admin — boot: login, navigation, router, global search, notifications bell. */
+/* Delyvo admin — boot: language switch, navigation, router, global search, notifications bell. */
 (function () {
   const A = window.ADM;
-  const { esc, L, toast } = A;
+  const { esc, L, toast, t } = A;
 
   // ---------------------------------------------------------------- navigation order
-  A.sections._g_ops = { group: 'التشغيل' };
-  A.sections._g_cat = { group: 'الكتالوج والمبيعات' };
-  A.sections._g_sys = { group: 'النظام' };
+  A.sections._g_ops = { get group() { return t('nav.g.ops'); } };
+  A.sections._g_cat = { get group() { return t('nav.g.cat'); } };
+  A.sections._g_sys = { get group() { return t('nav.g.sys'); } };
   A.order = ['dashboard', '_g_ops', 'operations', 'drivers', 'subscriptions', 'customers', 'reviews',
     '_g_cat', 'restaurants', 'meals', 'plans', 'marketing', '_g_sys', 'settings'];
   const ROUTES = A.order.filter((k) => !A.sections[k].group);
@@ -23,48 +23,33 @@
   });
   A.act['nav-open'] = () => document.body.classList.add('nav-open');
   A.act['nav-close'] = () => document.body.classList.remove('nav-open');
+  // ---------------------------------------------------------------- language (AR / EN)
+  A.setLang = function (l) {
+    if (l === I18N.lang) return;
+    I18N.setLang(l);
+    if (A.authed) {
+      A.render();
+      if (!gsRes.hidden) renderSearch();
+    }
+  };
+  A.act['set-lang'] = (el) => A.setLang(el.dataset.lang);
+
   document.getElementById('sb-nav').addEventListener('click', (e) => { if (e.target.closest('a')) document.body.classList.remove('nav-open'); });
 
-  // ---------------------------------------------------------------- login
-  const loginEl = document.getElementById('login');
-  const shellEl = document.getElementById('shell');
-  function showLogin() {
-    A.authed = false; shellEl.hidden = true; loginEl.hidden = false;
-    setTimeout(() => loginEl.querySelector('input').focus(), 50);
-  }
-  let inboxWired = false;
+  // ---------------------------------------------------------------- start (no login — the panel opens directly)
   function showApp() {
-    A.authed = true; loginEl.hidden = true; shellEl.hidden = false;
+    A.authed = true;
     A.ui.route = routeFromHash();
     A.render();
-    if (!inboxWired) {
-      inboxWired = true;
-      DVUI.watchInbox(() => 'admin', (n) => { if (!A.authed || A.localIds.has(n.id)) return; toast(L(n.title), L(n.body), n.icon || '🔔'); DVUI.beep(); });
-    }
+    DVUI.watchInbox(() => 'admin', (n) => { if (A.localIds.has(n.id)) return; toast(L(n.title), L(n.body), n.icon || '🔔'); DVUI.beep(); });
   }
-  document.getElementById('login-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const pw = e.target.elements.pw.value.trim();
-    if (pw !== 'admin') {
-      const err = document.getElementById('login-err'); err.hidden = false;
-      e.target.classList.remove('shake'); void e.target.offsetWidth; e.target.classList.add('shake');
-      return;
-    }
-    DV.session('admin', { ok: true, at: Date.now() });
-    e.target.reset();
-    showApp();
-  });
-  A.act.logout = () => {
-    if (!confirm('تسجيل الخروج من لوحة الأدمن؟')) return;
-    DV.session('admin', null); A.closeDrawer(); showLogin();
-  };
 
   // ---------------------------------------------------------------- reset demo
   A.act['reset-demo'] = () => {
-    if (!confirm('إعادة ضبط كل البيانات التجريبية؟\nسيتم مسح كل التعديلات والطلبات في كل التطبيقات المفتوحة.')) return;
+    if (!confirm(t('app.resetConfirm'))) return;
     A.ui.sel.clear(); A.ui.drafts = {}; A.closeDrawer();
     DV.reset();
-    toast('تمت إعادة ضبط البيانات', 'كل التطبيقات متزامنة الآن', '↺');
+    toast(t('app.resetDone'), t('app.resetDoneSub'), '↺');
   };
 
   // ---------------------------------------------------------------- notifications bell
@@ -104,23 +89,22 @@
     });
     s.subscriptions.forEach((sb) => {
       const c = DV.customer(sb.customerId) || {};
-      if (sb.code.toLowerCase().includes(q)) out.push({ kind: 'sub', id: sb.id, icon: '🔁', t: sb.code, sub: `${c.name} · ${L((DV.planType(sb.planType) || {}).name)} · ${sb.daysCount} يوم` });
+      if (sb.code.toLowerCase().includes(q)) out.push({ kind: 'sub', id: sb.id, icon: '🔁', t: sb.code, sub: `${c.name} · ${L((DV.planType(sb.planType) || {}).name)} · ${t('common.nDays', { n: sb.daysCount })}` });
     });
     s.orders.forEach((o) => {
-      if (o.no.toLowerCase().includes(q)) { const c = DV.customer(o.customerId) || {}; out.push({ kind: 'order', id: o.id, icon: '📦', t: o.no, sub: `${c.name} · ${DV.fmtDate(o.date, 'ar', { day: 'numeric', month: 'short' })} · ${DV.STATUS[o.status].ar}` }); }
+      if (o.no.toLowerCase().includes(q)) { const c = DV.customer(o.customerId) || {}; out.push({ kind: 'order', id: o.id, icon: '📦', t: o.no, sub: `${c.name} · ${A.D(o.date, { day: 'numeric', month: 'short' })} · ${A.stLabel(o.status)}` }); }
     });
     s.meals.forEach((m) => { if (['ar', 'nl', 'en'].some((l) => DV.L(m.name, l).toLowerCase().includes(q))) out.push({ kind: 'meal', id: m.id, icon: '🍽️', t: L(m.name), sub: (DV.restaurant(m.restaurantId) || {}).name }); });
     s.restaurants.forEach((r) => { if (r.name.toLowerCase().includes(q)) out.push({ kind: 'restaurant', id: r.id, icon: '🍳', t: r.name, sub: r.cuisine + ' · ' + r.city }); });
     return out.slice(0, 14);
   }
-  const KIND = { customer: 'عميل', sub: 'اشتراك', order: 'طلب', meal: 'وجبة', restaurant: 'مطعم' };
   function renderSearch() {
     const res = searchAll(gsIn.value);
     gsIdx = res.length ? 0 : -1;
     if (gsIn.value.trim().length < 2) { gsRes.hidden = true; return; }
     gsRes.hidden = false;
-    gsRes.innerHTML = res.length ? res.map((r, i) => `<button class="gs-i ${i === 0 ? 'on' : ''}" data-kind="${r.kind}" data-id="${r.id}"><span class="gs-ic">${r.icon}</span><span class="grow"><b>${esc(r.t)}</b><small>${esc(r.sub || '')}</small></span><span class="chip xs">${KIND[r.kind]}</span></button>`).join('')
-      : `<div class="gs-empty">لا توجد نتائج لـ “${esc(gsIn.value)}”</div>`;
+    gsRes.innerHTML = res.length ? res.map((r, i) => `<button class="gs-i ${i === 0 ? 'on' : ''}" data-kind="${r.kind}" data-id="${r.id}"><span class="gs-ic">${r.icon}</span><span class="grow"><b>${esc(r.t)}</b><small>${esc(r.sub || '')}</small></span><span class="chip xs">${esc(t('kind.' + r.kind))}</span></button>`).join('')
+      : `<div class="gs-empty">${esc(t('search.none', { q: gsIn.value }))}</div>`;
   }
   function openResult(kind, id) {
     gsRes.hidden = true; gsIn.value = ''; gsIn.blur();
@@ -153,6 +137,6 @@
   setInterval(() => { try { DV.housekeeping(); } catch (e) {} if (A.authed && A.ui.route === 'dashboard') A.schedule(); }, 60000);
 
   // ---------------------------------------------------------------- boot
-  const ses = DV.session('admin');
-  if (ses && ses.ok) showApp(); else showLogin();
+  I18N.applyStatic();
+  showApp();
 })();

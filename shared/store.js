@@ -26,7 +26,7 @@
             DV.ordersFor({date,restaurantId,driverId,customerId,subId,statuses})
 */
 (function () {
-  const VERSION = 4;
+  const VERSION = 5;
   const KEY = 'delyvo.state.v' + VERSION;
   const SEED = window.DV_SEED_DATA;
   const bc = 'BroadcastChannel' in window ? new BroadcastChannel('delyvo-sync') : null;
@@ -53,8 +53,15 @@
   function isLocked(iso) {
     const t = today();
     if (iso <= t) return true;
-    if (iso === addDays(t, 1) && new Date().getHours() >= state.settings.cutoffHour) return true;
+    const h = state.settings.cutoffHour;
+    if (h < 24 && iso === addDays(t, 1) && new Date().getHours() >= h) return true;
     return false;
+  }
+  /** Human label for the change deadline (24 = midnight before the delivery day). */
+  function cutoffLabel(lang = 'ar') {
+    const h = state.settings.cutoffHour;
+    if (h >= 24) return { ar: '12 منتصف الليل', nl: 'middernacht (00:00)', en: 'midnight (00:00)' }[lang] || '00:00';
+    return { ar: `الساعة ${h}:00 من اليوم اللي`, nl: `${h}:00 op de dag`, en: `${h}:00 on the day` }[lang];
   }
 
   // ---------------- text ----------------
@@ -69,8 +76,8 @@
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   const STATUS = {
-    scheduled: { ar: 'مجدول',         nl: 'Gepland',        en: 'Scheduled',     color: '#64748B', step: 0 },
-    accepted:  { ar: 'مقبول',         nl: 'Geaccepteerd',   en: 'Accepted',      color: '#2563EB', step: 1 },
+    scheduled: { ar: 'مؤكد',          nl: 'Bevestigd',      en: 'Confirmed',     color: '#64748B', step: 0 },
+    accepted:  { ar: 'مؤكد',          nl: 'Bevestigd',      en: 'Confirmed',     color: '#64748B', step: 0 }, // legacy — restaurants no longer accept
     preparing: { ar: 'قيد التحضير',   nl: 'In bereiding',   en: 'Preparing',     color: '#D97706', step: 2 },
     ready:     { ar: 'جاهز للاستلام', nl: 'Klaar',          en: 'Ready',         color: '#7C3AED', step: 3 },
     picked:    { ar: 'استلمه السائق', nl: 'Opgehaald',      en: 'Picked up',     color: '#0891B2', step: 4 },
@@ -381,7 +388,7 @@
         });
       });
       const soon = sb.days.filter((d) => d.status === 'active' && d.date > t && d.date <= addDays(t, 3) && Object.values(d.meals).some((v) => !v));
-      if (soon.length) { notify('customer:' + c.id, { key: 'remind:' + sb.id + ':' + t, icon: '⏰', title: { ar: 'تذكير: اختر وجبات الأيام الجاية', nl: 'Herinnering: kies je maaltijden', en: 'Reminder: pick upcoming meals' }, body: { ar: `${soon.length} يوم خلال ٣ أيام بدون اختيار — آخر موعد ${s.settings.cutoffHour}:00 قبل يوم التوصيل`, nl: `${soon.length} dag(en) zonder keuze — deadline ${s.settings.cutoffHour}:00 de dag ervoor`, en: `${soon.length} day(s) without a pick — deadline ${s.settings.cutoffHour}:00 the day before` } }); changed = true; }
+      if (soon.length) { notify('customer:' + c.id, { key: 'remind:' + sb.id + ':' + t, icon: '⏰', title: { ar: 'تذكير: اختر وجبات الأيام الجاية', nl: 'Herinnering: kies je maaltijden', en: 'Reminder: pick upcoming meals' }, body: { ar: `${soon.length} يوم خلال ٣ أيام بدون اختيار — آخر موعد ${cutoffLabel('ar')}`, nl: `${soon.length} dag(en) zonder keuze — deadline ${cutoffLabel('nl')}`, en: `${soon.length} day(s) without a pick — deadline ${cutoffLabel('en')}` } }); changed = true; }
       const active = sb.days.filter((d) => d.status === 'active');
       const left = active.filter((d) => d.date >= t).length;
       if (left > 0 && left <= 2) { notify('customer:' + c.id, { key: 'ending:' + sb.id, icon: '🔁', title: { ar: 'اشتراكك قرّب يخلص', nl: 'Je abonnement loopt bijna af', en: 'Your plan is ending soon' }, body: { ar: `باقي ${left} يوم — جدّد الآن بدون انقطاع`, nl: `Nog ${left} dag(en) — verleng zonder onderbreking`, en: `${left} day(s) left — renew without a gap` }, link: 'renew' }); changed = true; }
@@ -426,7 +433,7 @@
         { silent: true, paidAt: Date.now() - (Math.max(1, -off) + 2) * 864e5 });
     });
     // statuses for past & today
-    const windowStatus = { early: ['delivered', 'delivered', 'on_way'], noon: ['preparing', 'ready', 'accepted', 'preparing'], eve: ['accepted', 'scheduled', 'scheduled'] };
+    const windowStatus = { early: ['delivered', 'delivered', 'on_way'], noon: ['preparing', 'ready', 'scheduled', 'preparing'], eve: ['scheduled', 'scheduled', 'preparing'] };
     s.orders.forEach((o, i) => {
       const now = Date.now();
       if (o.date < t) {
@@ -442,7 +449,7 @@
     });
     s.meals.forEach((m) => { if (!m.ratingCount) { m.rating = 4.4 + rnd() * 0.5; m.ratingCount = 3 + Math.floor(rnd() * 20); } m.rating = Math.round(m.rating * 10) / 10; });
     // a few starter notifications
-    notify('customer:c1', { icon: '👋', title: { ar: 'أهلاً سارة! اشتراكك الصحي فعّال', nl: 'Hoi Sara! Je Gezond-abonnement is actief', en: 'Hi Sara! Your Healthy plan is active' }, body: { ar: 'تقدر تغيّر وجباتك أو تأجل أي يوم قبل الساعة 20:00 من اليوم السابق', nl: 'Wijzig of verzet tot 20:00 de dag ervoor', en: 'Change or postpone until 20:00 the day before' }, at: Date.now() - 864e5 * 3, read: true });
+    notify('customer:c1', { icon: '👋', title: { ar: 'أهلاً سارة! اشتراكك الصحي فعّال', nl: 'Hoi Sara! Je Gezond-abonnement is actief', en: 'Hi Sara! Your Healthy plan is active' }, body: { ar: 'تقدر تغيّر وجباتك أو تأجل أي يوم حتى الساعة 12 منتصف الليل قبل يوم التوصيل', nl: 'Wijzigen of verzetten kan tot middernacht vóór de bezorgdag', en: 'Change or postpone until midnight before the delivery day' }, at: Date.now() - 864e5 * 3, read: true });
     notify('admin', { icon: '📊', title: 'مرحباً في لوحة Delyvo', body: 'البيانات تجريبية ومتزامنة مع كل التطبيقات', read: false });
     s.restaurants.forEach((rs) => notify('restaurant:' + rs.id, { icon: '🧾', title: 'طلبات اليوم جاهزة في اللوحة', body: 'اطبع الاستكرات قبل بدء التحضير' }));
     s.drivers.forEach((d) => notify('driver:' + d.id, { icon: '🗺️', title: 'مسار اليوم جاهز', body: 'ابدأ بالاستلام من المطاعم' }));
@@ -467,7 +474,7 @@
     get state() { return state; },
     on: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
     commit, reset, session,
-    today, addDays, weekday, isLocked, fmtDate, fmtTime, fromISO, toISO,
+    today, addDays, weekday, isLocked, cutoffLabel, fmtDate, fmtTime, fromISO, toISO,
     L, money, esc, uid, STATUS, SLOTS, ALLERGENS: SEED.ALLERGENS, TAGS: SEED.TAGS,
     meal, restaurant, customer, driver, sub, order, planType, mealOption, driverForCity,
     price, buildDates, mealsFor, isSafe, chefPick,
