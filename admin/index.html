@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>Delyvo — لوحة الأدمن</title>
+  <link rel="icon" href="../assets/img/logo.png">
+  <link rel="stylesheet" href="../shared/base.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="adm">
+
+  <!-- Login -->
+  <div id="login" class="login" hidden>
+    <form class="login-card card" id="login-form" autocomplete="off">
+      <img src="../assets/img/logo.png" alt="Delyvo" class="login-logo">
+      <h1>لوحة الأدمن</h1>
+      <p class="muted small">إدارة الاشتراكات والمطاعم الشريكة والتوصيل</p>
+      <label class="field">
+        <span>كلمة المرور</span>
+        <input class="input" type="password" name="pw" placeholder="••••••" autofocus>
+      </label>
+      <p class="login-err small" id="login-err" hidden>كلمة المرور غير صحيحة</p>
+      <button class="btn btn-primary btn-block" type="submit">دخول</button>
+      <p class="tiny muted login-hint">نسخة تجريبية — كلمة المرور: <b class="num">admin</b></p>
+    </form>
+  </div>
+
+  <!-- App shell -->
+  <div id="shell" class="shell" hidden>
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-brand">
+        <img src="../assets/img/logo.png" alt="">
+        <div><b class="logo-word">Delyvo</b><small>لوحة الأدمن</small></div>
+      </div>
+      <nav class="sb-nav" id="sb-nav"></nav>
+      <div class="sb-foot">
+        <div class="sb-foot-t tiny">التطبيقات الأخرى</div>
+        <a href="../customer/" target="_blank" rel="noopener" class="sb-app">📱 تطبيق العميل</a>
+        <a href="../driver/" target="_blank" rel="noopener" class="sb-app">🛵 تطبيق السائق</a>
+        <a href="../restaurant/" target="_blank" rel="noopener" class="sb-app">🍳 لوحة المطعم</a>
+        <a href="../" target="_blank" rel="noopener" class="sb-app">🏠 الصفحة الرئيسية</a>
+      </div>
+    </aside>
+    <div class="sb-scrim" data-action="nav-close"></div>
+
+    <div class="main-col">
+      <header class="topbar">
+        <button class="icon-btn tb-menu" data-action="nav-open" aria-label="القائمة">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+        <div class="gsearch" id="gsearch">
+          <svg class="gs-ic" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="gs-input" type="search" placeholder="ابحث عن عميل، طلب (DV…)، اشتراك (SUB-…)" autocomplete="off">
+          <kbd class="num">/</kbd>
+          <div class="gs-results" id="gs-results" hidden></div>
+        </div>
+        <div class="grow"></div>
+        <div class="tb-apps">
+          <a class="btn btn-ghost btn-xs" href="../customer/" target="_blank" rel="noopener">العميل ↗</a>
+          <a class="btn btn-ghost btn-xs" href="../driver/" target="_blank" rel="noopener">السائق ↗</a>
+          <a class="btn btn-ghost btn-xs" href="../restaurant/" target="_blank" rel="noopener">المطعم ↗</a>
+        </div>
+        <button class="btn btn-outline btn-xs tb-reset" data-action="reset-demo" title="إعادة ضبط البيانات التجريبية">↺ <span>إعادة ضبط البيانات التجريبية</span></button>
+        <div class="bell-wrap">
+          <button class="icon-btn" data-action="bell" aria-label="الإشعارات" id="bell-btn">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span class="badge-dot num" id="bell-count" hidden>0</span>
+          </button>
+          <div class="bell-pop card" id="bell-pop" hidden></div>
+        </div>
+        <button class="icon-btn" data-action="logout" title="تسجيل الخروج" aria-label="تسجيل الخروج">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+        </button>
+      </header>
+      <main id="main" class="main"></main>
+    </div>
+  </div>
+
+  <div id="drawer-root"></div>
+  <div id="modal-root"></div>
+
+  <script src="../shared/data.js"></script>
+  <script src="../shared/store.js"></script>
+  <script src="../shared/ui.js"></script>
+  <script src="core.js"></script>
+  <script src="sec-overview.js"></script>
+  <script src="sec-people.js"></script>
+  <script src="sec-catalog.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

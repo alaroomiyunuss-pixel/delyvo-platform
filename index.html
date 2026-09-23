@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#F4F7F5">
+  <title>Delyvo · المنصة التجريبية</title>
+  <meta name="description" content="نموذج تفاعلي لمنصة Delyvo لاشتراكات الوجبات: تطبيق العميل، تطبيق السائق، لوحة المطعم، ولوحة الأدمن.">
+  <link rel="icon" href="assets/img/icon-192.png">
+  <link rel="stylesheet" href="shared/base.css">
+  <style>
+    body { background: radial-gradient(1100px 520px at 85% -8%, #DDF2E7 0%, transparent 60%), var(--bg); min-height: 100vh; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+    header.top { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+    header.top img { height: 30px; }
+    .hero { padding: 28px 0 34px; display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: center; }
+    .hero h1 { font-size: clamp(30px, 4.4vw, 48px); letter-spacing: -.025em; line-height: 1.15; }
+    .hero h1 span { color: var(--brand); }
+    .hero p { color: var(--mute); font-size: 17px; margin-top: 14px; max-width: 560px; }
+    .hero .cta { display: flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+    .qr-card { background: #fff; border-radius: 24px; padding: 22px; box-shadow: var(--sh-2); display: flex; gap: 18px; align-items: center; border: 1px solid var(--line-2); }
+    .qr-card #qr { width: 132px; height: 132px; flex: none; display: grid; place-items: center; background: var(--brand-ll); border-radius: 14px; }
+    .qr-card #qr img, .qr-card #qr svg { width: 120px; height: 120px; }
+    .apps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .app { background: #fff; border-radius: 24px; border: 1px solid var(--line-2); box-shadow: var(--sh-1); overflow: hidden; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+    .app:hover { transform: translateY(-4px); box-shadow: var(--sh-3); }
+    .app .shot { height: 150px; position: relative; display: grid; place-items: center; font-size: 54px; background: linear-gradient(135deg, var(--c1), var(--c2)); }
+    .app .shot small { position: absolute; top: 12px; inset-inline-start: 12px; background: rgba(255,255,255,.9); border-radius: 999px; padding: 3px 10px; font-size: 11.5px; font-weight: 700; color: var(--ink); }
+    .app .body { padding: 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .app h3 { font-size: 18px; }
+    .app ul { margin: 4px 0 8px; padding-inline-start: 18px; color: var(--mute); font-size: 13.5px; }
+    .app ul li { margin: 3px 0; }
+    .app .cred { font-size: 12.5px; background: var(--line-2); border-radius: 10px; padding: 6px 10px; }
+    .app .btn { margin-top: auto; }
+    h2.sec { font-size: 24px; margin: 44px 0 16px; }
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .flow .st { background: #fff; border-radius: 18px; padding: 16px; border: 1px solid var(--line-2); position: relative; }
+    .flow .st b { display: block; margin: 6px 0 4px; }
+    .flow .st p { font-size: 13px; color: var(--mute); }
+    .flow .st .n { position: absolute; top: 12px; inset-inline-end: 14px; font-family: var(--font-lat); font-weight: 800; color: #D5E3DB; font-size: 26px; }
+    .flow .st .ic { font-size: 26px; }
+    .live { display: none; margin-top: 18px; }
+    .live.on { display: block; }
+    .live-grid { display: grid; grid-template-columns: auto auto 1fr; gap: 18px; align-items: start; }
+    .mini-phone { width: 300px; height: 650px; border-radius: 44px; background: #0E1512; padding: 9px; box-shadow: 0 0 0 2px #2A332F, 0 30px 60px -20px rgba(10,40,25,.4); }
+    .mini-phone iframe { width: 100%; height: 100%; border: 0; border-radius: 36px; background: var(--bg); }
+    .panel-frame { height: 650px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--sh-2); background: #fff; display: flex; flex-direction: column; }
+    .panel-frame .bar { display: flex; gap: 6px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--line-2); background: var(--bg); }
+    .panel-frame .bar i { width: 10px; height: 10px; border-radius: 50%; background: #E2E8E4; }
+    .panel-frame .bar select { margin-inline-start: auto; height: 30px; border-radius: 8px; border: 1px solid var(--line); padding: 0 8px; }
+    .panel-frame iframe { flex: 1; border: 0; width: 100%; }
+    .cap { text-align: center; font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--ink-2); }
+    footer { padding: 40px 0; color: var(--mute); font-size: 13px; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    @media (max-width: 1100px) { .apps { grid-template-columns: repeat(2, 1fr); } .flow { grid-template-columns: repeat(2, 1fr); } .live-grid { grid-template-columns: 1fr 1fr; } .panel-frame { grid-column: 1 / -1; } }
+    @media (max-width: 760px) { .hero { grid-template-columns: 1fr; } .apps { grid-template-columns: 1fr; } .flow { grid-template-columns: 1fr; } .live-grid { grid-template-columns: 1fr; justify-items: center; } .qr-card { display: none; } .panel-frame { width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top"><img src="assets/img/logo.png" alt="Delyvo"><div class="row"><button class="btn btn-sm btn-ghost" id="reset">♻️ إعادة ضبط البيانات</button></div></header>
+
+    <section class="hero">
+      <div>
+        <span class="chip chip-brand">نموذج تفاعلي كامل · بدون باك إند</span>
+        <h1 style="margin-top:14px">منصة <span>Delyvo</span> لاشتراكات الوجبات — أربعة تطبيقات مترابطة</h1>
+        <p>العميل يشترك ويختار وجباته، الطلبات تتوزع تلقائياً على المطاعم الشريكة (بدون ما يشوف العميل أسماءها)، المطعم يحضّر ويطبع الاستكرات، السائق يستلم ويوصل، والأدمن يدير كل شي. كل التطبيقات متزامنة لحظياً داخل المتصفح.</p>
+        <div class="cta"><a class="btn btn-primary" href="customer/">📱 افتح تطبيق العميل</a><button class="btn btn-outline" id="liveBtn">⚡ العرض المباشر المتزامن</button></div>
+      </div>
+      <div class="qr-card"><div id="qr">📱</div><div><b>جرّبه على جوالك</b><p class="muted small" style="margin-top:6px">امسح الرمز، ثم «أضف إلى الشاشة الرئيسية» ليشتغل كتطبيق حقيقي بكامل الشاشة.</p></div></div>
+    </section>
+
+    <section class="live" id="live">
+      <div class="live-grid">
+        <div><div class="cap">📱 تطبيق العميل</div><div class="mini-phone"><iframe src="customer/" title="Customer"></iframe></div></div>
+        <div><div class="cap">🛵 تطبيق السائق</div><div class="mini-phone"><iframe src="driver/" title="Driver"></iframe></div></div>
+        <div><div class="cap">🖥️ اللوحات</div><div class="panel-frame"><div class="bar"><i></i><i></i><i></i><select id="panelSel"><option value="restaurant/">لوحة المطعم</option><option value="admin/">لوحة الأدمن</option></select></div><iframe id="panel" src="restaurant/" title="Panel"></iframe></div></div>
+      </div>
+      <p class="muted small" style="margin-top:12px;text-align:center">اشترك من تطبيق العميل ← تنزل الطلبات فوراً في لوحة المطعم ← جهّزها ← السائق يستلم ← العميل يوصله إشعار. كله في نفس الشاشة.</p>
+    </section>
+
+    <h2 class="sec">التطبيقات</h2>
+    <section class="apps">
+      <article class="app" style="--c1:#E8F6EF;--c2:#C9EEDB"><div class="shot">📱<small>iOS / Android · PWA</small></div><div class="body"><h3>تطبيق العميل</h3>
+        <ul><li>بنرات، اختيار الخطة والمدة والوجبات</li><li>تقويم البداية وأيام التوصيل</li><li>اختيار وجبة لكل يوم أو التخطّي</li><li>دفع iDEAL / Apple Pay / بطاقة / Klarna</li><li>تأجيل، تغيير وجبة، تتبع، تقييم، حساسية</li><li>عربي · Nederlands · English</li></ul>
+        <span class="cred">رمز التحقق: <b class="num">1234</b> · أو دخول «سارة» التجريبي</span><a class="btn btn-primary" href="customer/">فتح التطبيق</a></div></article>
+      <article class="app" style="--c1:#E0F2FE;--c2:#BAE0FB"><div class="shot">🛵<small>تطبيق خفيف</small></div><div class="body"><h3>تطبيق السائق</h3>
+        <ul><li>متصل / غير متصل</li><li>الاستلام من كل مطعم</li><li>محطات التوصيل مرتبة حسب الوقت</li><li>ملاحة Google Maps، صورة إثبات</li><li>تعذّر التسليم مع السبب</li></ul>
+        <span class="cred">PIN: <b class="num">1111</b> / <b class="num">2222</b> / <b class="num">3333</b></span><a class="btn btn-dark" href="driver/">فتح التطبيق</a></div></article>
+      <article class="app" style="--c1:#FEF3C7;--c2:#FDE2A4"><div class="shot">🍳<small>للتابلت واللابتوب</small></div><div class="body"><h3>لوحة المطعم</h3>
+        <ul><li>استقبال الطلبات لحظياً مع صوت</li><li>لوحة كانبان: قبول ← تحضير ← جاهز</li><li>قائمة التحضير المجمّعة</li><li>طباعة استكرات بـ QR + تحذير حساسية</li><li>إدارة المنيو والأداء والمستحقات</li></ul>
+        <span class="cred">PIN: <b class="num">1234</b></span><a class="btn btn-dark" href="restaurant/">فتح اللوحة</a></div></article>
+      <article class="app" style="--c1:#EDE9FE;--c2:#D9D0FB"><div class="shot">📊<small>الإدارة الرئيسية</small></div><div class="body"><h3>لوحة الأدمن</h3>
+        <ul><li>مؤشرات وإيرادات ورسوم بيانية</li><li>العمليات اليومية وتوزيع السائقين</li><li>الاشتراكات والعملاء والتقييمات</li><li>المطاعم الشريكة والوجبات والأسعار</li><li>البنرات، الأكواد، الإشعارات، الإعدادات</li></ul>
+        <span class="cred">كلمة المرور: <b class="num">admin</b></span><a class="btn btn-dark" href="admin/">فتح اللوحة</a></div></article>
+    </section>
+
+    <h2 class="sec">دورة الطلب</h2>
+    <section class="flow">
+      <div class="st"><span class="n">1</span><span class="ic">🧑‍💻</span><b>العميل يشترك</b><p>يختار الخطة والأيام ووجباته ويدفع.</p></div>
+      <div class="st"><span class="n">2</span><span class="ic">🧭</span><b>توزيع على المطاعم</b><p>كل وجبة تروح لمطبخها الشريك تلقائياً، والعميل ما يشوف اسم المطعم.</p></div>
+      <div class="st"><span class="n">3</span><span class="ic">🍳</span><b>المطعم يحضّر</b><p>يقبل ويحضّر ويطبع الاستكرات قبل الموعد.</p></div>
+      <div class="st"><span class="n">4</span><span class="ic">🛵</span><b>السائق يوصّل</b><p>يستلم من المطاعم ويوصل للعميل ضمن وقت التوصيل.</p></div>
+      <div class="st"><span class="n">5</span><span class="ic">⭐</span><b>إشعار وتقييم</b><p>العميل يتابع لحظياً ويقيّم، والتقييم يوصل للمطعم والأدمن.</p></div>
+    </section>
+
+    <footer><span>Delyvo · نموذج تفاعلي. كل البيانات تجريبية ومحفوظة في متصفحك فقط.</span><span class="num">v1.0</span></footer>
+  </div>
+  <script src="shared/data.js"></script>
+  <script src="shared/store.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script>
+    document.getElementById('reset').onclick = () => { if (confirm('إعادة كل البيانات التجريبية للوضع الأصلي؟')) { DV.reset(); ['customer','driver','restaurant','admin'].forEach(a => DV.session(a, null)); location.reload(); } };
+    const live = document.getElementById('live');
+    document.getElementById('liveBtn').onclick = () => { live.classList.toggle('on'); if (live.classList.contains('on')) live.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    document.getElementById('panelSel').onchange = (e) => { document.getElementById('panel').src = e.target.value; };
+    try { const q = qrcode(0, 'M'); q.addData(new URL('customer/', location.href).href); q.make(); document.getElementById('qr').innerHTML = q.createSvgTag({ cellSize: 4, margin: 0 }); } catch (e) {}
+  </script>
+</body>
+</html>

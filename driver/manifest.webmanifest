@@ -1,0 +1,17 @@
+{
+  "name": "Delyvo Driver",
+  "short_name": "Delyvo Driver",
+  "description": "تطبيق سائقي Delyvo — الاستلام من المطاعم وتوصيل الوجبات للمشتركين",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F7F5",
+  "theme_color": "#1FA06B",
+  "icons": [
+    { "src": "../assets/img/logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "../assets/img/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
