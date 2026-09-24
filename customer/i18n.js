@@ -2,6 +2,7 @@
 window.I18N = {
   ar: {
     dir: 'rtl',
+    mySub: 'اشتراكي', manage: 'إدارة', seeMenu: 'تصفّح القائمة', needPickN: 'عندك {n} يوم بدون اختيار', supportShort: 'الدعم', renewSoon: 'اشتراكك قرّب يخلص — جدّد بدون انقطاع', alreadySub: 'عندك اشتراك فعّال', alreadySubSub: 'تقدر تتحكم فيه من «وجباتي»، والتجديد يظهر قبل نهايته', 
     hello: 'أهلاً', goodMorning: 'صباح الخير', goodEvening: 'مساء الخير',
     tabHome: 'الرئيسية', tabPlan: 'وجباتي', tabInbox: 'الإشعارات', tabAccount: 'حسابي',
     onb1t: 'وجبات طازجة كل يوم', onb1s: 'من أفضل المطابخ الشريكة في مدينتك، توصل لباب بيتك',
@@ -57,6 +58,7 @@ window.I18N = {
   },
   nl: {
     dir: 'ltr',
+    mySub: 'Mijn abonnement', manage: 'Beheren', seeMenu: 'Bekijk menu', needPickN: '{n} dag(en) zonder keuze', supportShort: 'Support', renewSoon: 'Je abonnement loopt bijna af — verleng zonder onderbreking', alreadySub: 'Je hebt al een actief abonnement', alreadySubSub: 'Beheer het in «Mijn maaltijden»; verlengen verschijnt vlak voor het einde', 
     hello: 'Hoi', goodMorning: 'Goedemorgen', goodEvening: 'Goedenavond',
     tabHome: 'Home', tabPlan: 'Mijn maaltijden', tabInbox: 'Meldingen', tabAccount: 'Account',
     onb1t: 'Elke dag verse maaltijden', onb1s: 'Van de beste partnerkeukens in je stad, tot aan je deur',
@@ -107,6 +109,7 @@ window.I18N = {
   },
   en: {
     dir: 'ltr',
+    mySub: 'My plan', manage: 'Manage', seeMenu: 'Browse menu', needPickN: '{n} day(s) without a pick', supportShort: 'Support', renewSoon: 'Your plan ends soon — renew without a gap', alreadySub: 'You already have an active plan', alreadySubSub: 'Manage it in "My meals"; renewal appears near the end', 
     hello: 'Hi', goodMorning: 'Good morning', goodEvening: 'Good evening',
     tabHome: 'Home', tabPlan: 'My meals', tabInbox: 'Inbox', tabAccount: 'Account',
     onb1t: 'Fresh meals every day', onb1s: 'From the best partner kitchens in your city, to your door',

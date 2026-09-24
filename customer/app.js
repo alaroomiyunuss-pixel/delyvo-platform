@@ -46,6 +46,13 @@
 
   // ---------------- helpers ----------------
   const activeSubs = () => (me() ? DV.state.subscriptions.filter((s) => s.customerId === me().id && s.status === 'active').sort((a, b) => a.startDate.localeCompare(b.startDate)) : []);
+  /** Progress numbers for a subscription; endingSoon drives whether renewal is offered. */
+  function subStats(sb) {
+    const t = today(); const act = sb.days.filter((d) => d.status === 'active');
+    const left = act.filter((d) => d.date >= t).length;
+    return { left, done: sb.daysCount - left, total: sb.daysCount, last: (act[act.length - 1] || {}).date || sb.startDate,
+      needPick: act.filter((d) => d.date >= t && Object.values(d.meals).some((v) => !v)).length, endingSoon: left <= 3 };
+  }
   const allSubs = () => (me() ? DV.state.subscriptions.filter((s) => s.customerId === me().id).sort((a, b) => b.createdAt - a.createdAt) : []);
   const inbox = () => (me() ? DV.notificationsFor('customer:' + me().id) : []);
   const unread = () => inbox().filter((n) => !n.read).length;
@@ -153,22 +160,40 @@
         <button class="icon-btn" data-a="tab" data-t="inbox">${I.bell}${unread() ? `<i class="badge-dot num">${unread()}</i>` : ''}</button>
       </header>
       ${banners.length ? `<section class="banners"><div class="banner-track" data-banners>${banners.map((b) => `
-        <article class="banner" style="--bc:${E(b.color)}" data-a="bannerTap"><div class="b-txt"><b>${E(Lx(b.title))}</b><small>${E(Lx(b.sub))}</small><span class="b-cta">${T('subscribeNow')} ${chev()}</span></div><img src="${E(b.img)}" alt=""></article>`).join('')}</div>
+        <article class="banner" style="--bc:${E(b.color)}" data-a="bannerTap"><div class="b-txt"><b>${E(Lx(b.title))}</b><small>${E(Lx(b.sub))}</small><span class="b-cta">${subs.length ? T('seeMenu') : T('subscribeNow')} ${chev()}</span></div><img src="${E(b.img)}" alt=""></article>`).join('')}</div>
         <div class="dots">${banners.map((_, i) => `<i class="${i === ui.bannerIdx % banners.length ? 'on' : ''}"></i>`).join('')}</div></section>` : ''}
       ${todayCard}
-      <section class="sec"><div class="sec-h"><div><h3>${T('choosePlan')}</h3><small class="muted">${T('choosePlanSub')}</small></div></div>
+      ${subs.length ? manageCard(subs[0]) : `<section class="sec"><div class="sec-h"><div><h3>${T('choosePlan')}</h3><small class="muted">${T('choosePlanSub')}</small></div></div>
         <div class="plan-cards">${S.plans.types.map((p) => `
           <button class="plan-card" data-a="startWiz" data-type="${p.id}" style="--pc:${p.color}">
             <span class="pc-ic">${p.icon}</span><b>${E(Lx(p.name))}</b><small>${E(Lx(p.desc))}</small>
             <span class="pc-price"><small>${T('from')}</small> <b class="num">${money(DV.price({ planType: p.id, days: 5, option: 'lunch', city: '' }).total)}</b><small> / ${T('daysN', { n: 5 })}</small></span>
             <span class="pc-kcal num">${p.kcal} ${T('kcal')}</span>
-          </button>`).join('')}</div></section>
+          </button>`).join('')}</div></section>`}
       <section class="sec"><div class="sec-h"><h3>${T('thisWeek')}</h3><button class="link" data-a="page" data-p="menu">${T('seeAll')}</button></div>
         <div class="h-scroll">${weekMeals.map((m) => mealMini(m)).join('')}</div></section>
-      <section class="sec"><h3 style="margin-bottom:12px">${T('howItWorks')}</h3>
-        <div class="how">${[['🥗', T('how1')], ['📅', T('how2')], ['🛵', T('how3')]].map(([ic, t], i) => `<div class="how-i"><span class="how-n num">${i + 1}</span><span class="how-ic">${ic}</span><b>${t}</b></div>`).join('')}</div></section>
+      ${subs.length ? '' : `<section class="sec"><h3 style="margin-bottom:12px">${T('howItWorks')}</h3>
+        <div class="how">${[['🥗', T('how1')], ['📅', T('how2')], ['🛵', T('how3')]].map(([ic, t], i) => `<div class="how-i"><span class="how-n num">${i + 1}</span><span class="how-ic">${ic}</span><b>${t}</b></div>`).join('')}</div></section>`}
       <section class="trust">${[['🌿', T('trustFresh')], ['✅', T('trustHalal')], ['📅', T('trustFlex')]].map(([i, t]) => `<div><span>${i}</span><small>${t}</small></div>`).join('')}</section>
       <div style="height:18px"></div></div>`;
+  }
+
+  function manageCard(sb) {
+    const p = DV.planType(sb.planType); const st = subStats(sb); const pct = Math.round((st.done / st.total) * 100);
+    const act = (ic, label, a, extra = '') => `<button class="mg-a" data-a="${a}" ${extra}><span>${ic}</span><small>${label}</small></button>`;
+    return `<section class="sec"><div class="sec-h"><h3>${T('mySub')}</h3><button class="link" data-a="tab" data-t="plan">${T('manage')}</button></div>
+      <div class="manage card" style="--pc:${p.color}">
+        <div class="row"><span class="pc-ic">${p.icon}</span><div class="grow"><b>${E(Lx(p.name))} · ${T('daysN', { n: st.total })}</b><small class="muted">${E(Lx(DV.mealOption(sb.option).name))} · ${E(sb.code)}</small></div>
+          <div class="ring sm" style="--p:${pct}"><div><b class="num">${st.done}</b><small class="num">/${st.total}</small></div></div></div>
+        <div class="mg-bar"><i style="width:${pct}%"></i></div>
+        <div class="row between small"><span class="muted">${T('remaining')}: <b class="num">${st.left}</b> ${T('days')}</span><span class="muted">${T('endsOn')}: <b>${fdShort(st.last)}</b></span></div>
+        ${st.needPick ? `<button class="mg-warn" data-a="tab" data-t="plan">⏳ ${T('needPickN', { n: st.needPick })}<b>${T('chooseMeal')} ${chev()}</b></button>` : ''}
+        <div class="mg-actions">
+          ${act('🍽️', T('changeMeal'), 'tab', 'data-t="plan"')}${act('📅', T('postponeDay'), 'tab', 'data-t="plan"')}${act('🧾', T('invoice'), 'invoiceSheet', `data-id="${sb.id}"`)}
+          <a class="mg-a" href="https://wa.me/${DV.state.settings.supportWhatsapp.replace(/\D/g, '')}" target="_blank" rel="noopener"><span>💬</span><small>${T('supportShort')}</small></a>
+        </div>
+        ${st.endingSoon ? `<button class="mg-renew" data-a="startWiz" data-renew="${sb.id}">🔁 <span class="grow">${T('renewSoon')}</span><b>${T('renew')}</b></button>` : ''}
+      </div></section>`;
   }
 
   function tracker(step, orders) {
@@ -208,7 +233,7 @@
     const pct = Math.round((deliveredDays / total) * 100);
     const needPick = act.filter((d) => d.date >= t && Object.values(d.meals).some((v) => !v)).length;
     return `<div class="scroll with-tabbar" data-scroll="plan">
-      <header class="big-title row between"><h1>${T('tabPlan')}</h1><button class="btn btn-sm btn-ghost" data-a="startWiz" data-renew="${sb.id}">＋ ${T('newSub')}</button></header>
+      <header class="big-title row between"><h1>${T('tabPlan')}</h1>${subStats(sb).endingSoon ? `<button class="btn btn-sm btn-ghost" data-a="startWiz" data-renew="${sb.id}">🔁 ${T('renew')}</button>` : ''}</header>
       ${subs.length > 1 ? `<div class="seg-scroll">${subs.map((s) => `<button class="chip ${s.id === sb.id ? 'chip-brand' : ''}" data-a="pickSub" data-id="${s.id}">${DV.planType(s.planType).icon} ${E(Lx(DV.planType(s.planType).name))} · ${fdShort(s.startDate)}</button>`).join('')}</div>` : ''}
       <section class="sub-hero" style="--pc:${p.color}">
         <div class="ring" style="--p:${pct}"><div><b class="num">${deliveredDays}</b><small class="num">/${total}</small></div></div>
@@ -218,7 +243,7 @@
       </section>
       <div class="day-strip" data-scroll="strip">${sb.days.map((d) => dayChip(sb, d)).join('')}</div>
       ${dayDetail(sb, sb.days.find((d) => d.date === ui.planDay))}
-      <section class="sec"><button class="renew-card" data-a="startWiz" data-renew="${sb.id}"><span>🔁</span><div class="grow"><b>${T('renew')}</b><small class="muted">${T('endsOn')}: ${fd(act.length ? act[act.length - 1].date : sb.startDate)}</small></div>${chev()}</button></section>
+      ${subStats(sb).endingSoon ? `<section class="sec"><button class="renew-card" data-a="startWiz" data-renew="${sb.id}"><span>🔁</span><div class="grow"><b>${T('renew')}</b><small class="muted">${T('endsOn')}: ${fd(act.length ? act[act.length - 1].date : sb.startDate)}</small></div>${chev()}</button></section>` : ''}
       <div style="height:12px"></div></div>`;
   }
 
@@ -569,6 +594,7 @@
   // ================= sheets =================
   function vSheet() {
     const s = ui.sheet; if (!s) return '';
+    if (!me() && s.type !== 'lang') { ui.sheet = null; return ''; }
     let inner = '';
     if (s.type === 'meal') inner = shMeal(s);
     else if (s.type === 'picker') inner = shPicker(s);
@@ -728,8 +754,14 @@
     page: (d) => { ui.page = d.p; ui.prefDraft = null; ui.addrDraft = { labelKey: 'home', street: '', zip: '', city: (DV.state.zones[0] || {}).city, notes: '' }; go('page'); },
     pageBack: () => { ui.view = 'tabs'; ui.page = null; render(); },
     menuFilter: (d) => { ui.menuFilter = d.f; render(); },
-    bannerTap: () => A.startWiz({}),
-    startWiz: (d) => { if (!me()) return go('login'); newWizard(d.type, d.renew); go('wizard'); },
+    bannerTap: () => (activeSubs().length ? A.page({ p: 'menu' }) : A.startWiz({})),
+    startWiz: (d) => {
+      if (!me()) return go('login');
+      // one active plan at a time: subscribers manage it; renewal only opens near the end
+      const cur = activeSubs()[0];
+      if (cur && !(d.renew && subStats(cur).endingSoon)) { DVUI.toast(T('alreadySub'), T('alreadySubSub'), '✅', 2400); return setTab('plan'); }
+      newWizard(d.type, d.renew); go('wizard');
+    },
     wizBack: () => { const w = ui.wiz; if (w.step === 0 || (w.step === 1 && w.skippedType)) return A.wizClose(); w.step--; ui.anim = 'step'; ui.resetScroll = true; render(); },
     wizClose: () => { ui.wiz = null; ui.view = 'tabs'; render(); },
     wizGo: (d) => { ui.wiz.step = +d.s; ui.resetScroll = true; render(); },
@@ -781,8 +813,8 @@
     savePrefs: () => { DV.updateCustomer(me().id, ui.prefDraft); DVUI.toast(T('saved'), '', '✅'); A.pageBack(); },
     saveAddress: () => { const a = ui.addrDraft; if (a.street.trim().length < 3) return DVUI.toast(T('street'), '✕', '⚠️'); DV.updateCustomer(me().id, { addresses: me().addresses.concat([{ id: DV.uid('a'), label: a.labelKey === 'work' ? T('work') : T('home'), street: a.street, zip: a.zip, city: a.city, notes: a.notes }]) }); DVUI.toast(T('saved'), '', '📍'); A.pageBack(); },
     notifPref: (d, el) => { const np = Object.assign({}, me().notifPrefs, { [d.k]: el.checked }); DV.updateCustomer(me().id, { notifPrefs: np }); },
-    logout: () => { DV.session('customer', null); ses = null; ui.view = 'login'; ui.tab = 'home'; render(); },
-    resetDemo: () => { if (confirm('Reset demo data?')) { DV.reset(); DV.session('customer', null); ses = null; ui.view = 'login'; render(); } }
+    logout: () => { DV.session('customer', null); ses = null; ui.sheet = null; ui.wiz = null; ui.view = 'login'; ui.tab = 'home'; render(); },
+    resetDemo: () => { if (confirm('Reset demo data?')) { DV.reset(); DV.session('customer', null); ses = null; ui.sheet = null; ui.wiz = null; ui.view = 'login'; render(); } }
   };
 
   $app.addEventListener('click', (e) => {

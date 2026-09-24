@@ -361,3 +361,23 @@
 .bm-logo { font-size: 28px; font-weight: 800; font-family: var(--font-lat); letter-spacing: -.02em; margin-top: 8px; }
 .bm-amt { font-size: 34px; font-weight: 800; }
 .invoice .row { padding: 2px 0; }
+
+/* ---------- subscriber: manage plan card ---------- */
+.manage { padding: 16px; display: grid; gap: 12px; }
+.manage b { font-size: 15.5px; }
+.manage small { display: block; }
+.ring.sm { width: 56px; height: 56px; background: conic-gradient(var(--pc) calc(var(--p) * 1%), var(--line-2) 0); }
+.ring.sm > div { width: 45px; height: 45px; background: #fff; color: var(--ink); }
+.ring.sm b { font-size: 16px; }
+.ring.sm small { display: inline; font-size: 10px; color: var(--mute); }
+.mg-bar { height: 6px; border-radius: 3px; background: var(--line-2); overflow: hidden; }
+.mg-bar i { display: block; height: 100%; background: var(--pc); border-radius: 3px; }
+.mg-warn { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 10px 12px; border-radius: 12px; background: #FFFBF0; border: 1.5px dashed #F5C77A; color: #92400E; font-size: 13px; font-weight: 600; text-align: start; }
+.mg-warn b { display: inline-flex; align-items: center; gap: 2px; color: var(--brand-d); font-size: 13px; white-space: nowrap; }
+.mg-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.mg-a { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px; border-radius: 14px; background: var(--bg); text-align: center; }
+.mg-a span { font-size: 20px; line-height: 1; }
+.mg-a small { font-size: 11px; font-weight: 600; color: var(--ink-2); line-height: 1.25; }
+.mg-a:active { transform: scale(.96); }
+.mg-renew { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; border-radius: 14px; background: var(--brand-l); color: var(--brand-dd); font-size: 13px; font-weight: 600; text-align: start; }
+.mg-renew b { background: var(--brand); color: #fff; padding: 6px 12px; border-radius: 999px; font-size: 12.5px; }
