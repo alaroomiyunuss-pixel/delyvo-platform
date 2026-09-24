@@ -79,7 +79,7 @@
     const s = slides[ui.onb];
     return `<div class="screen onb">
       <div class="onb-img" style="background-image:url('${s.img}')"><div class="onb-fade"></div>
-        <div class="onb-top"><img src="../assets/img/logo.png" alt="Delyvo" class="onb-logo"><button class="chip" data-a="langSheet">${I.globe} ${lang.toUpperCase()}</button></div></div>
+        <div class="onb-top"><img src="../assets/img/logo.png" alt="Delyvo" class="onb-logo"><button class="chip" data-a="langSheet">${I.globe} ${{ ar: 'العربية', nl: 'Nederlands', en: 'English' }[lang]}</button></div></div>
       <div class="onb-body fade-up" key="${ui.onb}">
         <div class="dots">${slides.map((_, i) => `<i class="${i === ui.onb ? 'on' : ''}"></i>`).join('')}</div>
         <h1>${E(s.t)}</h1><p class="muted">${E(s.s)}</p>
@@ -114,7 +114,7 @@
         <button class="btn btn-primary btn-block" data-a="finishProfile">${T('continue')}</button>`;
     }
     return `<div class="screen ${ui.anim === 'push' ? 'push' : ''}">
-      <header class="nav">${L.step !== 'phone' ? `<button class="icon-btn" data-a="loginBack">${back()}</button>` : '<img src="../assets/img/logo.png" class="nav-logo" alt="Delyvo">'}<span class="grow"></span><button class="chip" data-a="langSheet">${I.globe} ${lang.toUpperCase()}</button></header>
+      <header class="nav">${L.step !== 'phone' ? `<button class="icon-btn" data-a="loginBack">${back()}</button>` : '<img src="../assets/img/logo.png" class="nav-logo" alt="Delyvo">'}<span class="grow"></span><button class="chip" data-a="langSheet">${I.globe} ${{ ar: 'العربية', nl: 'Nederlands', en: 'English' }[lang]}</button></header>
       <div class="scroll pad-x login stack" data-scroll="login">${body}</div></div>`;
   }
 
@@ -371,7 +371,7 @@
       footer = `<button class="btn btn-primary btn-block" data-a="savePrefs">${T('save')}</button>`;
     } else if (P === 'addresses') {
       title = T('addresses');
-      body = `<div class="pad-x stack">${c.addresses.map((a) => `<div class="card pad row"><span class="lr-ic">${I.pin}</span><div class="grow"><b>${E(a.label || T('home'))}</b><small class="muted">${E(a.street)}, ${E(a.zip)} ${E(a.city)}</small>${a.notes ? `<small class="muted">📝 ${E(a.notes)}</small>` : ''}</div></div>`).join('')}
+      body = `<div class="pad-x stack">${c.addresses.map((a) => `<div class="card pad row"><span class="lr-ic">${I.pin}</span><div class="grow"><b>${E(DV.addrLabel(a, lang) || T('home'))}</b><small class="muted">${E(a.street)}, ${E(a.zip)} ${E(a.city)}</small>${a.notes ? `<small class="muted">📝 ${E(a.notes)}</small>` : ''}</div></div>`).join('')}
         <h3 style="margin-top:18px">${T('addAddress')}</h3>${addressForm('addrDraft')}</div>`;
       footer = `<button class="btn btn-primary btn-block" data-a="saveAddress">${T('save')}</button>`;
     } else if (P === 'payments') {
@@ -509,7 +509,7 @@
     const w = ui.wiz; const c = me();
     return `<div class="pad-x stack">
       <h3>${T('address')}</h3>
-      ${c.addresses.map((a) => `<button class="opt-card slim ${w.addrMode === 'existing' && w.addressId === a.id ? 'on' : ''}" data-a="wizAddr" data-id="${a.id}"><div class="row">${I.pin}<div class="grow"><b>${E(a.label || T('home'))}</b><small class="muted">${E(a.street)}, ${E(a.zip)} ${E(a.city)}</small></div><span class="radio"></span></div></button>`).join('')}
+      ${c.addresses.map((a) => `<button class="opt-card slim ${w.addrMode === 'existing' && w.addressId === a.id ? 'on' : ''}" data-a="wizAddr" data-id="${a.id}"><div class="row">${I.pin}<div class="grow"><b>${E(DV.addrLabel(a, lang) || T('home'))}</b><small class="muted">${E(a.street)}, ${E(a.zip)} ${E(a.city)}</small></div><span class="radio"></span></div></button>`).join('')}
       <button class="opt-card slim ${w.addrMode === 'new' ? 'on' : ''}" data-a="wizAddr" data-id=""><div class="row"><span>＋</span><b class="grow">${T('addAddress')}</b><span class="radio"></span></div></button>
       ${w.addrMode === 'new' ? addressForm('wiz.newAddr') : ''}
       <div class="hr"></div>
@@ -715,7 +715,7 @@
     const patch = { allergies: w.allergies.slice(), dislikes: w.dislikes };
     if (w.addrMode === 'new') {
       addressId = DV.uid('a');
-      patch.addresses = c.addresses.concat([{ id: addressId, label: w.newAddr.labelKey === 'work' ? T('work') : T('home'), street: w.newAddr.street, zip: w.newAddr.zip, city: w.newAddr.city, notes: w.newAddr.notes }]);
+      patch.addresses = c.addresses.concat([{ id: addressId, labelKey: w.newAddr.labelKey === 'work' ? 'work' : 'home', label: w.newAddr.labelKey === 'work' ? T('work') : T('home'), street: w.newAddr.street, zip: w.newAddr.zip, city: w.newAddr.city, notes: w.newAddr.notes }]);
     }
     DV.updateCustomer(c.id, patch);
     const sb = DV.createSubscription(c.id, { planType: w.type, days: w.days, option: w.option, startDate: w.start, weekdays: w.weekdays, window: w.window, addressId, picks: w.picks, promo: w.promoApplied, payment: { method: w.pay, detail: w.pay === 'ideal' ? w.bank : w.pay === 'card' ? '•••• ' + w.card.num.replace(/\D/g, '').slice(-4) : '' } });
@@ -811,7 +811,7 @@
     prefAllergy: (d) => { const p = ui.prefDraft; p.allergies = p.allergies.includes(d.k) ? p.allergies.filter((x) => x !== d.k) : p.allergies.concat(d.k); render(); },
     prefGoal: (d) => { ui.prefDraft.goal = d.g; render(); },
     savePrefs: () => { DV.updateCustomer(me().id, ui.prefDraft); DVUI.toast(T('saved'), '', '✅'); A.pageBack(); },
-    saveAddress: () => { const a = ui.addrDraft; if (a.street.trim().length < 3) return DVUI.toast(T('street'), '✕', '⚠️'); DV.updateCustomer(me().id, { addresses: me().addresses.concat([{ id: DV.uid('a'), label: a.labelKey === 'work' ? T('work') : T('home'), street: a.street, zip: a.zip, city: a.city, notes: a.notes }]) }); DVUI.toast(T('saved'), '', '📍'); A.pageBack(); },
+    saveAddress: () => { const a = ui.addrDraft; if (a.street.trim().length < 3) return DVUI.toast(T('street'), '✕', '⚠️'); DV.updateCustomer(me().id, { addresses: me().addresses.concat([{ id: DV.uid('a'), labelKey: a.labelKey === 'work' ? 'work' : 'home', label: a.labelKey === 'work' ? T('work') : T('home'), street: a.street, zip: a.zip, city: a.city, notes: a.notes }]) }); DVUI.toast(T('saved'), '', '📍'); A.pageBack(); },
     notifPref: (d, el) => { const np = Object.assign({}, me().notifPrefs, { [d.k]: el.checked }); DV.updateCustomer(me().id, { notifPrefs: np }); },
     logout: () => { DV.session('customer', null); ses = null; ui.sheet = null; ui.wiz = null; ui.view = 'login'; ui.tab = 'home'; render(); },
     resetDemo: () => { if (confirm('Reset demo data?')) { DV.reset(); DV.session('customer', null); ses = null; ui.sheet = null; ui.wiz = null; ui.view = 'login'; render(); } }
@@ -841,7 +841,15 @@
 
   // ================= render =================
   let bannerTimer = null;
+  // clear language switch outside the phone frame (hidden on real phones, where the in-app one is used)
+  const langFloat = document.createElement('div');
+  langFloat.className = 'lang-float';
+  langFloat.innerHTML = [['ar', 'العربية'], ['nl', 'Nederlands'], ['en', 'English']].map(([id, l]) => `<button data-l="${id}">${l}</button>`).join('');
+  langFloat.addEventListener('click', (e) => { const b = e.target.closest('[data-l]'); if (b && b.dataset.l !== lang) A.setLang({ l: b.dataset.l }); });
+  document.body.appendChild(langFloat);
+
   function render() {
+    langFloat.querySelectorAll('[data-l]').forEach((b) => b.classList.toggle('on', b.dataset.l === lang));
     const scrolls = {};
     $app.querySelectorAll('[data-scroll]').forEach((el) => { scrolls[el.dataset.scroll] = [el.scrollTop, el.scrollLeft]; });
     document.documentElement.lang = lang; document.documentElement.dir = I18N[lang].dir;

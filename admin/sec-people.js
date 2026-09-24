@@ -197,9 +197,9 @@
           if (o.restaurantId) perR[o.restaurantId] = (perR[o.restaurantId] || 0) + 1;
         }
       });
-      Object.entries(perR).forEach(([rid, c]) => A.note(s, 'restaurant:' + rid, { icon: '🚫', title: `إلغاء ${c} طلب`, body: `اشتراك ${x.code} أُلغي من الإدارة` }));
+      Object.entries(perR).forEach(([rid, c]) => A.note(s, 'restaurant:' + rid, { icon: '🚫', title: DV.tri(`إلغاء ${c} طلب`, `${c} bestelling(en) geannuleerd`, `${c} order(s) cancelled`), body: DV.tri(`اشتراك ${x.code} أُلغي من الإدارة`, `Abonnement ${x.code} geannuleerd door Delyvo`, `Subscription ${x.code} was cancelled by Delyvo`) }));
       A.note(s, 'customer:' + x.customerId, { icon: '🚫', title: { ar: 'تم إلغاء اشتراكك', nl: 'Je abonnement is geannuleerd', en: 'Your plan was cancelled' }, body: { ar: `${x.code} — تواصل معنا لأي استفسار`, nl: `${x.code} — neem contact op bij vragen`, en: `${x.code} — contact us with any questions` } });
-      A.note(s, 'admin', { icon: '🚫', title: `إلغاء اشتراك ${x.code}`, body: `${k} طلب قادم أُلغي` });
+      A.note(s, 'admin', { icon: '🚫', title: DV.tri(`إلغاء اشتراك ${x.code}`, `Abonnement ${x.code} geannuleerd`, `Subscription ${x.code} cancelled`), body: DV.tri(`${k} طلب قادم أُلغي`, `${k} komende bestelling(en) geannuleerd`, `${k} upcoming order(s) cancelled`) });
       return k;
     });
     toast(t('sub.t.cancelled'), t('sub.t.nCancelled', { n }), '🚫');
@@ -224,7 +224,7 @@
           const ref = 'RF-' + Math.random().toString(36).slice(2, 8).toUpperCase();
           (x.refunds = x.refunds || []).push({ amount, reason, at: Date.now(), ref, method: x.payment.method });
           A.note(s, 'customer:' + x.customerId, { icon: '💶', title: { ar: 'تم استرداد مبلغ لك', nl: 'Terugbetaling verwerkt', en: 'Refund processed' }, body: { ar: `${DV.money(amount, 'ar')} إلى ${payLabel(x.payment.method, 'ar')} · ${x.code}`, nl: `${DV.money(amount, 'nl')} naar ${payLabel(x.payment.method, 'nl')} · ${x.code}`, en: `${DV.money(amount, 'en')} to ${payLabel(x.payment.method, 'en')} · ${x.code}` } });
-          A.note(s, 'admin', { icon: '💶', title: `استرداد ${DV.money(amount)}`, body: `${x.code} · ${reason}` });
+          A.note(s, 'admin', { icon: '💶', title: DV.tri(`استرداد ${DV.money(amount, 'ar')}`, `Terugbetaling ${DV.money(amount, 'nl')}`, `Refund ${DV.money(amount, 'en')}`), body: `${x.code} · ${reason}` });
         });
         toast(t('sub.t.refunded'), M(amount), '💶');
       }
@@ -297,7 +297,7 @@
       </div>
 
       <div class="dsec"><h4>${esc(t('cust.addresses'))}</h4>
-        ${c.addresses.length ? c.addresses.map((a) => `<div class="addr"><span class="chip xs">${esc(a.label || '')}</span><span class="lat">${esc([a.street, a.zip, a.city].filter(Boolean).join(', '))}</span>${a.notes ? `<small class="muted">${esc(a.notes)}</small>` : ''}</div>`).join('') : `<p class="muted small">${esc(t('cust.noAddr'))}</p>`}
+        ${c.addresses.length ? c.addresses.map((a) => `<div class="addr"><span class="chip xs">${esc(DV.addrLabel(a, A.lang()) || '')}</span><span class="lat">${esc([a.street, a.zip, a.city].filter(Boolean).join(', '))}</span>${a.notes ? `<small class="muted">${esc(a.notes)}</small>` : ''}</div>`).join('') : `<p class="muted small">${esc(t('cust.noAddr'))}</p>`}
       </div>
 
       <div class="dsec"><h4>${esc(t('cust.allergiesEdit'))}</h4>

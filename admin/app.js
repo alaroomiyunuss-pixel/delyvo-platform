@@ -95,7 +95,7 @@
       if (o.no.toLowerCase().includes(q)) { const c = DV.customer(o.customerId) || {}; out.push({ kind: 'order', id: o.id, icon: '📦', t: o.no, sub: `${c.name} · ${A.D(o.date, { day: 'numeric', month: 'short' })} · ${A.stLabel(o.status)}` }); }
     });
     s.meals.forEach((m) => { if (['ar', 'nl', 'en'].some((l) => DV.L(m.name, l).toLowerCase().includes(q))) out.push({ kind: 'meal', id: m.id, icon: '🍽️', t: L(m.name), sub: (DV.restaurant(m.restaurantId) || {}).name }); });
-    s.restaurants.forEach((r) => { if (r.name.toLowerCase().includes(q)) out.push({ kind: 'restaurant', id: r.id, icon: '🍳', t: r.name, sub: r.cuisine + ' · ' + r.city }); });
+    s.restaurants.forEach((r) => { if (r.name.toLowerCase().includes(q)) out.push({ kind: 'restaurant', id: r.id, icon: '🍳', t: r.name, sub: L(r.cuisine) + ' · ' + r.city }); });
     return out.slice(0, 14);
   }
   function renderSearch() {

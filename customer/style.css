@@ -381,3 +381,12 @@
 .mg-a:active { transform: scale(.96); }
 .mg-renew { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; border-radius: 14px; background: var(--brand-l); color: var(--brand-dd); font-size: 13px; font-weight: 600; text-align: start; }
 .mg-renew b { background: var(--brand); color: #fff; padding: 6px 12px; border-radius: 999px; font-size: 12.5px; }
+
+/* ---------- language switch outside the phone (desktop / tablet) ---------- */
+.lang-float { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; gap: 4px; padding: 4px; background: rgba(255,255,255,.95); backdrop-filter: blur(12px); border: 1px solid var(--line); border-radius: 999px; box-shadow: var(--sh-2); direction: ltr; }
+.lang-float button { height: 34px; padding: 0 16px; border-radius: 999px; font-size: 13.5px; font-weight: 700; color: var(--mute); font-family: var(--font); }
+.lang-float button.on { background: var(--brand); color: #fff; }
+.lang-float button:not(.on):hover { background: var(--line-2); color: var(--ink); }
+@media (max-width: 600px) { .lang-float { display: none; } }
+@media (min-width: 601px) { .stage { padding-top: 64px; } .device { max-height: calc(100vh - 88px); } }
+@media (min-width: 601px) and (max-height: 880px) { .stage { padding: 60px 16px 12px; } .device { height: calc(100vh - 76px); } }

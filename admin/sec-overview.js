@@ -120,7 +120,7 @@
             ${al.noDriver.length ? `<div class="alert a-warn"><span class="al-ic">🚚</span><div class="grow"><b>${t('dash.al.noDriver', { n: `<span class="num">${al.noDriver.length}</span>` })}</b><small>${esc(t('dash.al.noDriverSub'))}</small></div><button class="btn btn-primary btn-xs" data-action="ops-auto" data-date="${td}">${esc(t('dash.assign'))}</button></div>` : ''}
             ${al.unselected.slice(0, 6).map((u) => `<div class="alert a-info"><span class="al-ic">🍽️</span><div class="grow"><b>${esc(t('dash.al.noPick', { name: custName(u.sb.customerId) }))}</b><small>${fdate(u.d.date)} · ${u.miss.map(slotLabel).join(t('common.listSep'))} · ${esc(u.sb.code)} — ${esc(t('dash.al.chefPicks'))}</small></div><button class="btn btn-ghost btn-xs" data-action="open-sub" data-id="${u.sb.id}">${esc(t('common.open'))}</button></div>`).join('')}
             ${al.unselected.length > 6 ? `<div class="tiny muted" style="padding:0 6px">+ ${t('dash.al.moreDays', { n: `<span class="num">${al.unselected.length - 6}</span>` })}</div>` : ''}
-            ${al.failed.map((o) => `<div class="alert a-danger"><span class="al-ic">⚠️</span><div class="grow"><b>${esc(t('dash.al.failed', { no: o.no }))}</b><small>${esc(custName(o.customerId))} · ${fdate(o.date)}${o.failReason ? ' · ' + esc(o.failReason) : ''}</small></div><button class="btn btn-ghost btn-xs" data-action="goto-order" data-id="${o.id}">${esc(t('common.view'))}</button></div>`).join('')}
+            ${al.failed.map((o) => `<div class="alert a-danger"><span class="al-ic">⚠️</span><div class="grow"><b>${esc(t('dash.al.failed', { no: o.no }))}</b><small>${esc(custName(o.customerId))} · ${fdate(o.date)}${o.failReason ? ' · ' + esc(L(o.failReason)) : ''}</small></div><button class="btn btn-ghost btn-xs" data-action="goto-order" data-id="${o.id}">${esc(t('common.view'))}</button></div>`).join('')}
             ${al.low.map((o) => `<div class="alert a-warn"><span class="al-ic">⭐</span><div class="grow"><b>${esc(t('dash.al.rating', { r: o.rating }))} — ${esc(L((DV.meal(o.mealId) || {}).name))}</b><small>${esc(restName(o.restaurantId))} · ${esc(custName(o.customerId))}${o.comment ? ' · "' + esc(o.comment) + '"' : ''}</small></div><a class="btn btn-ghost btn-xs" href="#reviews">${esc(t('nav.reviews'))}</a></div>`).join('')}
             ${!alertsCount ? empty('✅', t('dash.al.allGood'), t('dash.al.none')) : ''}
           </div>
@@ -168,7 +168,7 @@
       <td>${slotLabel(o.slot)}</td>
       <td class="meal-cell">${m ? `<div class="row"><img class="thumb" src="${esc(m.img)}" alt="" loading="lazy"><div class="grow"><div class="ellipsis">${esc(L(m.name))}</div><div class="tiny"><i class="dot" style="background:${restColor(o.restaurantId)}"></i> ${esc(restName(o.restaurantId))}</div></div></div>` : `<span class="chip chip-warn xs">${esc(t('ops.notSetYet'))}</span>`}</td>
       <td class="small">${esc(windowLabel(o.window))}</td>
-      <td>${pill(o.status)}${o.status === 'failed' && o.failReason ? `<div class="tiny muted">${esc(o.failReason)}</div>` : ''}</td>
+      <td>${pill(o.status)}${o.status === 'failed' && o.failReason ? `<div class="tiny muted">${esc(L(o.failReason))}</div>` : ''}</td>
       <td>${driverSelect(o)}</td>
       <td>${statusSelect(o)}</td>
       <td>${o.subId ? `<button class="icon-btn sm" title="${esc(t('kind.sub'))}" data-action="open-sub" data-id="${o.subId}">↗</button>` : ''}</td>
@@ -305,7 +305,7 @@
     toast(n ? t('ops.t.assigned', { n }) : t('ops.t.allAssigned'), t('ops.t.byZone'), '⚡');
     if (n) { // let each driver know
       const per = {}; DV.state.orders.filter((o) => o.date === d && o.driverId).forEach((o) => { per[o.driverId] = (per[o.driverId] || 0) + 1; });
-      DV.commit((s) => Object.entries(per).forEach(([did, c]) => A.note(s, 'driver:' + did, { icon: '🗺️', title: `مسار ${DV.fmtDate(d, 'ar', { weekday: 'long' })}: ${c} طلب`, body: 'تم تحديث قائمة التوصيل من الإدارة' })));
+      DV.commit((s) => Object.entries(per).forEach(([did, c]) => A.note(s, 'driver:' + did, { icon: '🗺️', title: DV.tri(`مسار ${DV.fmtDate(d, 'ar', { weekday: 'long' })}: ${c} طلب`, `Route ${DV.fmtDate(d, 'nl', { weekday: 'long' })}: ${c} bestelling(en)`, `Route for ${DV.fmtDate(d, 'en', { weekday: 'long' })}: ${c} order(s)`), body: DV.tri('تم تحديث قائمة التوصيل من الإدارة', 'Je bezorglijst is bijgewerkt door Delyvo', 'Your delivery list was updated by Delyvo') })));
     }
   };
   A.chg['ops-driver'] = (el) => {

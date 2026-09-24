@@ -26,7 +26,7 @@
             DV.ordersFor({date,restaurantId,driverId,customerId,subId,statuses})
 */
 (function () {
-  const VERSION = 5;
+  const VERSION = 6;
   const KEY = 'delyvo.state.v' + VERSION;
   const SEED = window.DV_SEED_DATA;
   const bc = 'BroadcastChannel' in window ? new BroadcastChannel('delyvo-sync') : null;
@@ -90,6 +90,19 @@
     lunch:  { ar: 'غداء', nl: 'Lunch', en: 'Lunch', icon: '☀️' },
     dinner: { ar: 'عشاء', nl: 'Diner', en: 'Dinner', icon: '🌙' }
   };
+
+  /** Text in all three languages (notifications and other generated messages). */
+  const tri = (ar, nl, en) => ({ ar, nl, en });
+  /** Known delivery-failure reasons (drivers submit the Arabic text) → all languages. */
+  const FAIL_REASONS = {
+    'العميل لا يرد': tri('العميل لا يرد', 'Klant reageert niet', 'Customer not answering'),
+    'العنوان خاطئ': tri('العنوان خاطئ', 'Verkeerd adres', 'Wrong address'),
+    'المبنى مغلق': tri('المبنى مغلق', 'Gebouw gesloten', 'Building closed'),
+    'العميل غير موجود': tri('العميل غير موجود', 'Klant niet thuis', 'Customer not at home')
+  };
+  const ADDR_LABELS = { home: tri('البيت', 'Thuis', 'Home'), work: tri('العمل', 'Werk', 'Work') };
+  /** Address name in the viewer's language (labelKey home/work, else the free text). */
+  const addrLabel = (a, lang = 'ar') => (a && a.labelKey && ADDR_LABELS[a.labelKey] ? ADDR_LABELS[a.labelKey][lang] : L(a && a.label, lang));
 
   // ---------------- persistence & sync ----------------
   function readStored() {
@@ -219,7 +232,7 @@
       const c = { id: uid('c'), name: name || '', phone, email: email || '', allergies: [], dislikes: '', goal: 'balanced', addresses: [],
         wallet: 0, lang: 'ar', createdAt: Date.now(), notifPrefs: { push: true, whatsapp: true, email: false } };
       s.customers.push(c);
-      notify('admin', { title: 'عميل جديد سجّل', body: (name || phone), icon: '👤' });
+      notify('admin', { title: tri('عميل جديد سجّل', 'Nieuwe klant geregistreerd', 'New customer signed up'), body: (name || phone), icon: '👤' });
       return c;
     });
   }
@@ -252,10 +265,11 @@
       const empty = sb.days.filter((d) => Object.values(d.meals).some((v) => !v)).length;
       if (empty) notify(to, { icon: '🍽️', title: { ar: 'باقي تختار وجباتك', nl: 'Kies nog je maaltijden', en: 'Pick your remaining meals' },
         body: { ar: `عندك ${empty} يوم بدون اختيار. لو ما اخترت، الشيف يختار لك قبل الموعد.`, nl: `${empty} dag(en) zonder keuze. Anders kiest de chef voor je.`, en: `${empty} day(s) without a pick. Otherwise the chef chooses for you.` } });
-      notify('admin', { icon: '💳', title: `اشتراك جديد ${sb.code}`, body: `${c.name} · ${L(planType(sb.planType).name)} · ${sb.daysCount} يوم · ${money(pr.total)}` });
+      notify('admin', { icon: '💳', title: tri(`اشتراك جديد ${sb.code}`, `Nieuw abonnement ${sb.code}`, `New subscription ${sb.code}`),
+        body: tri(`${c.name} · ${L(planType(sb.planType).name, 'ar')} · ${sb.daysCount} يوم · ${money(pr.total, 'ar')}`, `${c.name} · ${L(planType(sb.planType).name, 'nl')} · ${sb.daysCount} dagen · ${money(pr.total, 'nl')}`, `${c.name} · ${L(planType(sb.planType).name, 'en')} · ${sb.daysCount} days · ${money(pr.total, 'en')}`) });
       const perR = {};
       s.orders.filter((o) => o.subId === sb.id && o.restaurantId).forEach((o) => { perR[o.restaurantId] = (perR[o.restaurantId] || 0) + 1; });
-      Object.entries(perR).forEach(([rid, n]) => notify('restaurant:' + rid, { icon: '🧾', title: `وصلتك ${n} طلبات جديدة`, body: `اشتراك ${sb.code} · من ${fmtDate(sb.startDate)}` }));
+      Object.entries(perR).forEach(([rid, n]) => notify('restaurant:' + rid, { icon: '🧾', title: tri(`وصلتك ${n} طلبات جديدة`, `${n} nieuwe bestellingen`, `${n} new orders received`), body: tri(`اشتراك ${sb.code} · من ${fmtDate(sb.startDate, 'ar')}`, `Abonnement ${sb.code} · vanaf ${fmtDate(sb.startDate, 'nl')}`, `Subscription ${sb.code} · from ${fmtDate(sb.startDate, 'en')}`) }));
     }
     return sb;
   }
@@ -273,7 +287,7 @@
         const m = byId(s.meals, mealId);
         const prevR = o.restaurantId;
         o.mealId = mealId; o.restaurantId = m ? m.restaurantId : null; o.status = 'scheduled'; o.printed = false; o.auto = false;
-        if (prevR && prevR !== o.restaurantId && prev) notify('restaurant:' + prevR, { icon: '↩️', title: 'طلب اتحوّل', body: `${o.no} · ${fmtDate(date)} لم يعد عندكم` });
+        if (prevR && prevR !== o.restaurantId && prev) notify('restaurant:' + prevR, { icon: '↩️', title: tri('طلب اتحوّل', 'Bestelling verplaatst', 'Order moved'), body: tri(`${o.no} · ${fmtDate(date, 'ar')} لم يعد عندكم`, `${o.no} · ${fmtDate(date, 'nl')} niet meer bij jullie`, `${o.no} · ${fmtDate(date, 'en')} is no longer yours`) });
       }
       return true;
     });
@@ -290,7 +304,7 @@
       const c = byId(s.customers, sb.customerId);
       s.orders.filter((o) => o.subId === subId && o.date === date && o.status !== 'cancelled').forEach((o) => {
         o.status = 'cancelled'; o.history.push({ s: 'cancelled', at: Date.now(), note: 'postponed' });
-        if (o.restaurantId) notify('restaurant:' + o.restaurantId, { icon: '📅', title: 'طلب تأجّل', body: `${o.no} · ${fmtDate(date)}` });
+        if (o.restaurantId) notify('restaurant:' + o.restaurantId, { icon: '📅', title: tri('طلب تأجّل', 'Bestelling verzet', 'Order postponed'), body: tri(`${o.no} · ${fmtDate(date, 'ar')}`, `${o.no} · ${fmtDate(date, 'nl')}`, `${o.no} · ${fmtDate(date, 'en')}`) });
       });
       const last = sb.days.filter((d) => d.status === 'active').map((d) => d.date).sort().pop() || date;
       let nd = addDays(last > date ? last : date, 1), guard = 0;
@@ -301,7 +315,7 @@
       sb.postponed++;
       notify('customer:' + c.id, { icon: '📅', title: { ar: 'تم تأجيل وجبتك', nl: 'Maaltijd verzet', en: 'Meal postponed' },
         body: { ar: `من ${fmtDate(date, 'ar')} إلى ${fmtDate(nd, 'ar')}`, nl: `Van ${fmtDate(date, 'nl')} naar ${fmtDate(nd, 'nl')}`, en: `From ${fmtDate(date, 'en')} to ${fmtDate(nd, 'en')}` } });
-      notify('admin', { icon: '📅', title: 'تأجيل يوم', body: `${c.name} · ${sb.code} · ${date} → ${nd}` });
+      notify('admin', { icon: '📅', title: tri('تأجيل يوم', 'Dag verzet', 'Day postponed'), body: `${c.name} · ${sb.code} · ${date} → ${nd}` });
       return { ok: true, newDate: nd };
     });
   }
@@ -314,16 +328,17 @@
         const o = byId(s.orders, id); if (!o || o.status === status) return;
         o.status = status; o.history.push({ s: status, at: Date.now(), by: meta.by || '', note: meta.reason || '' });
         if (meta.proof) o.proof = meta.proof;
-        if (meta.reason) o.failReason = meta.reason;
+        if (meta.reason) o.failReason = FAIL_REASONS[meta.reason] || meta.reason;
         const to = 'customer:' + o.customerId; const k = o.date + ':' + status;
         const dname = o.driverId ? (byId(s.drivers, o.driverId) || {}).name : '';
         if (status === 'preparing') notify(to, { key: 'prep:' + k, icon: '👨‍🍳', title: { ar: 'وجبتك قيد التحضير', nl: 'Je maaltijd wordt bereid', en: 'Your meal is being prepared' }, body: { ar: 'المطبخ بدأ تحضير وجبة اليوم بمكونات طازجة', nl: 'De keuken is gestart met verse ingrediënten', en: 'The kitchen started with fresh ingredients' } });
-        if (status === 'ready' && o.driverId) notify('driver:' + o.driverId, { icon: '📦', title: 'طلب جاهز للاستلام', body: `${o.no} · ${(byId(s.restaurants, o.restaurantId) || {}).name || ''}` });
+        if (status === 'ready' && o.driverId) notify('driver:' + o.driverId, { icon: '📦', title: tri('طلب جاهز للاستلام', 'Bestelling klaar om op te halen', 'Order ready for pickup'), body: `${o.no} · ${(byId(s.restaurants, o.restaurantId) || {}).name || ''}` });
         if (status === 'on_way' || status === 'picked') notify(to, { key: 'way:' + o.date, icon: '🛵', title: { ar: 'المندوب في الطريق إليك', nl: 'Bezorger is onderweg', en: 'Your driver is on the way' }, body: { ar: `${dname} يوصل طلبك خلال الفترة المحددة`, nl: `${dname} bezorgt binnen je tijdvak`, en: `${dname} will arrive within your window` } });
         if (status === 'delivered') notify(to, { key: 'del:' + o.date, icon: '🎉', title: { ar: 'تم توصيل وجبتك — بالعافية!', nl: 'Bezorgd — eet smakelijk!', en: 'Delivered — enjoy!' }, body: { ar: 'قيّم وجبتك عشان نحسّن اختياراتك', nl: 'Beoordeel je maaltijd', en: 'Rate your meal to improve picks' } });
         if (status === 'failed') {
           notify(to, { key: 'fail:' + o.date, icon: '⚠️', title: { ar: 'تعذّر توصيل الطلب', nl: 'Bezorging mislukt', en: 'Delivery failed' }, body: { ar: 'فريق الدعم بيتواصل معك الآن', nl: 'Support neemt contact op', en: 'Support will contact you' } });
-          notify('admin', { icon: '⚠️', title: `تعذّر توصيل ${o.no}`, body: `${(byId(s.customers, o.customerId) || {}).name} · ${meta.reason || ''}` });
+          const who = (byId(s.customers, o.customerId) || {}).name; const rs = FAIL_REASONS[meta.reason] || tri(meta.reason || '', meta.reason || '', meta.reason || '');
+          notify('admin', { icon: '⚠️', title: tri(`تعذّر توصيل ${o.no}`, `Bezorging mislukt ${o.no}`, `Delivery failed ${o.no}`), body: tri(`${who} · ${rs.ar}`, `${who} · ${rs.nl}`, `${who} · ${rs.en}`) });
         }
       });
       return true;
@@ -333,7 +348,7 @@
     ids = [].concat(ids);
     return commit((s) => {
       ids.forEach((id) => { const o = byId(s.orders, id); if (o) o.driverId = driverId; });
-      if (driverId && ids.length) notify('driver:' + driverId, { icon: '🗺️', title: `تم إسناد ${ids.length} طلب لك`, body: 'افتح قائمة التوصيل لليوم' });
+      if (driverId && ids.length) notify('driver:' + driverId, { icon: '🗺️', title: tri(`تم إسناد ${ids.length} طلب لك`, `${ids.length} bestelling(en) aan jou toegewezen`, `${ids.length} order(s) assigned to you`), body: tri('افتح قائمة التوصيل لليوم', 'Open je bezorglijst van vandaag', "Open today's delivery list") });
     });
   }
   function autoAssign(date) {
@@ -350,8 +365,8 @@
       const m = byId(s.meals, o.mealId);
       if (m) { m.rating = ((m.rating || 0) * m.ratingCount + stars) / (m.ratingCount + 1); m.ratingCount++; }
       if (stars <= 2) {
-        notify('admin', { icon: '⭐', title: `تقييم منخفض (${stars}/5)`, body: `${m ? L(m.name) : ''} · ${comment || ''}` });
-        if (o.restaurantId) notify('restaurant:' + o.restaurantId, { icon: '⭐', title: `تقييم ${stars}/5 على ${m ? L(m.name) : ''}`, body: comment || '' });
+        notify('admin', { icon: '⭐', title: tri(`تقييم منخفض (${stars}/5)`, `Lage beoordeling (${stars}/5)`, `Low rating (${stars}/5)`), body: tri(`${m ? L(m.name, 'ar') : ''} · ${comment || ''}`, `${m ? L(m.name, 'nl') : ''} · ${comment || ''}`, `${m ? L(m.name, 'en') : ''} · ${comment || ''}`) });
+        if (o.restaurantId) notify('restaurant:' + o.restaurantId, { icon: '⭐', title: tri(`تقييم ${stars}/5 على ${m ? L(m.name, 'ar') : ''}`, `Beoordeling ${stars}/5 voor ${m ? L(m.name, 'nl') : ''}`, `${stars}/5 rating for ${m ? L(m.name, 'en') : ''}`), body: comment || '' });
       }
     });
   }
@@ -413,7 +428,7 @@
       const [name, city, street, zip, allergies] = p;
       s.customers.push({ id: 'c' + (i + 1), name, phone: i === 0 ? '+31 6 1234 5678' : '+31 6 ' + (20000000 + i * 137911).toString().replace(/(\d{4})(\d{4})/, '$1 $2'),
         email: name.toLowerCase().replace(/[^a-z]+/g, '.') + '@mail.nl', allergies, dislikes: '', goal: pick(['balanced', 'lose', 'gain']),
-        addresses: [{ id: 'a1', label: i % 3 === 1 ? 'العمل' : 'البيت', street, zip, city, notes: i % 4 === 0 ? 'الجرس الثاني، الطابق ٢' : '' }],
+        addresses: [{ id: 'a1', labelKey: i % 3 === 1 ? 'work' : 'home', label: i % 3 === 1 ? 'العمل' : 'البيت', street, zip, city, notes: i % 4 === 0 ? '2nd doorbell, 2nd floor' : '' }],
         wallet: 0, lang: 'ar', createdAt: Date.now() - (30 + i) * 864e5, notifPrefs: { push: true, whatsapp: true, email: false } });
     });
     S.subsPlan.forEach(([pi, plan, days, option, off, weekdays, window]) => {
@@ -450,9 +465,9 @@
     s.meals.forEach((m) => { if (!m.ratingCount) { m.rating = 4.4 + rnd() * 0.5; m.ratingCount = 3 + Math.floor(rnd() * 20); } m.rating = Math.round(m.rating * 10) / 10; });
     // a few starter notifications
     notify('customer:c1', { icon: '👋', title: { ar: 'أهلاً سارة! اشتراكك الصحي فعّال', nl: 'Hoi Sara! Je Gezond-abonnement is actief', en: 'Hi Sara! Your Healthy plan is active' }, body: { ar: 'تقدر تغيّر وجباتك أو تأجل أي يوم حتى الساعة 12 منتصف الليل قبل يوم التوصيل', nl: 'Wijzigen of verzetten kan tot middernacht vóór de bezorgdag', en: 'Change or postpone until midnight before the delivery day' }, at: Date.now() - 864e5 * 3, read: true });
-    notify('admin', { icon: '📊', title: 'مرحباً في لوحة Delyvo', body: 'البيانات تجريبية ومتزامنة مع كل التطبيقات', read: false });
-    s.restaurants.forEach((rs) => notify('restaurant:' + rs.id, { icon: '🧾', title: 'طلبات اليوم جاهزة في اللوحة', body: 'اطبع الاستكرات قبل بدء التحضير' }));
-    s.drivers.forEach((d) => notify('driver:' + d.id, { icon: '🗺️', title: 'مسار اليوم جاهز', body: 'ابدأ بالاستلام من المطاعم' }));
+    notify('admin', { icon: '📊', title: tri('مرحباً في لوحة Delyvo', 'Welkom in het Delyvo-dashboard', 'Welcome to the Delyvo dashboard'), body: tri('البيانات تجريبية ومتزامنة مع كل التطبيقات', 'Demodata, live gesynchroniseerd met alle apps', 'Demo data, synced live with every app'), read: false });
+    s.restaurants.forEach((rs) => notify('restaurant:' + rs.id, { icon: '🧾', title: tri('طلبات اليوم جاهزة في اللوحة', 'De bestellingen van vandaag staan klaar', "Today's orders are on the board"), body: tri('اطبع الاستكرات قبل بدء التحضير', 'Print de etiketten voor je begint', 'Print the labels before you start prepping') }));
+    s.drivers.forEach((d) => notify('driver:' + d.id, { icon: '🗺️', title: tri('مسار اليوم جاهز', 'Je route van vandaag staat klaar', "Today's route is ready"), body: tri('ابدأ بالاستلام من المطاعم', 'Begin met ophalen bij de restaurants', 'Start with the restaurant pickups') }));
     return s;
   }
 
@@ -475,7 +490,7 @@
     on: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
     commit, reset, session,
     today, addDays, weekday, isLocked, cutoffLabel, fmtDate, fmtTime, fromISO, toISO,
-    L, money, esc, uid, STATUS, SLOTS, ALLERGENS: SEED.ALLERGENS, TAGS: SEED.TAGS,
+    L, money, esc, uid, STATUS, SLOTS, tri, addrLabel, FAIL_REASONS, ALLERGENS: SEED.ALLERGENS, TAGS: SEED.TAGS,
     meal, restaurant, customer, driver, sub, order, planType, mealOption, driverForCity,
     price, buildDates, mealsFor, isSafe, chefPick,
     createSubscription, setDayMeal, postponeDay, setOrderStatus, assignDriver, autoAssign, rateOrder,

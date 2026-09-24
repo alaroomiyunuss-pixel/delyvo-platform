@@ -32,11 +32,11 @@
   };
 
   const restaurants = [
-    { id: 'r1', name: 'Mandi House',   cuisine: 'عربي / يمني',  city: 'Rotterdam', address: 'Nieuwe Binnenweg 112, Rotterdam', phone: '+31 10 222 1100', contact: 'Abdullah', pin: '1234', active: true, costPerMeal: 6.5, color: '#C2410C' },
-    { id: 'r2', name: 'Istanbul Grill', cuisine: 'تركي',        city: 'Rotterdam', address: 'West-Kruiskade 40, Rotterdam',   phone: '+31 10 333 4400', contact: 'Murat',    pin: '1234', active: true, costPerMeal: 6.0, color: '#B91C1C' },
-    { id: 'r3', name: 'Green Bowl Kitchen', cuisine: 'صحي / بوكي', city: 'Den Haag', address: 'Grote Marktstraat 9, Den Haag', phone: '+31 70 555 1200', contact: 'Sanne',  pin: '1234', active: true, costPerMeal: 7.2, color: '#15803D' },
-    { id: 'r4', name: 'Spice Route',   cuisine: 'هندي / سورينامي', city: 'Delft', address: 'Oude Delft 77, Delft',          phone: '+31 15 212 8800', contact: 'Ravi',     pin: '1234', active: true, costPerMeal: 6.4, color: '#A16207' },
-    { id: 'r5', name: 'Plant Power',   cuisine: 'نباتي',       city: 'Rotterdam', address: 'Witte de Withstraat 21, Rotterdam', phone: '+31 10 777 9000', contact: 'Iris', pin: '1234', active: true, costPerMeal: 6.2, color: '#4D7C0F' }
+    { id: 'r1', name: 'Mandi House',   cuisine: { ar: 'عربي / يمني', nl: 'Arabisch / Jemenitisch', en: 'Arabic / Yemeni' },  city: 'Rotterdam', address: 'Nieuwe Binnenweg 112, Rotterdam', phone: '+31 10 222 1100', contact: 'Abdullah', pin: '1234', active: true, costPerMeal: 6.5, color: '#C2410C' },
+    { id: 'r2', name: 'Istanbul Grill', cuisine: { ar: 'تركي', nl: 'Turks', en: 'Turkish' },        city: 'Rotterdam', address: 'West-Kruiskade 40, Rotterdam',   phone: '+31 10 333 4400', contact: 'Murat',    pin: '1234', active: true, costPerMeal: 6.0, color: '#B91C1C' },
+    { id: 'r3', name: 'Green Bowl Kitchen', cuisine: { ar: 'صحي / بوكي', nl: 'Gezond / poké', en: 'Healthy / poké' }, city: 'Den Haag', address: 'Grote Marktstraat 9, Den Haag', phone: '+31 70 555 1200', contact: 'Sanne',  pin: '1234', active: true, costPerMeal: 7.2, color: '#15803D' },
+    { id: 'r4', name: 'Spice Route',   cuisine: { ar: 'هندي / سورينامي', nl: 'Indiaas / Surinaams', en: 'Indian / Surinamese' }, city: 'Delft', address: 'Oude Delft 77, Delft',          phone: '+31 15 212 8800', contact: 'Ravi',     pin: '1234', active: true, costPerMeal: 6.4, color: '#A16207' },
+    { id: 'r5', name: 'Plant Power',   cuisine: { ar: 'نباتي', nl: 'Vegan', en: 'Vegan' },       city: 'Rotterdam', address: 'Witte de Withstraat 21, Rotterdam', phone: '+31 10 777 9000', contact: 'Iris', pin: '1234', active: true, costPerMeal: 6.2, color: '#4D7C0F' }
   ];
 
   // m(id, restaurant, img, names, desc, plans, slots, kcal, p, c, f, allergens, tags, ingredients)
@@ -121,8 +121,8 @@
   ];
 
   const promos = [
-    { code: 'WELKOM10', type: 'percent', value: 10, active: true, uses: 0, note: 'أول اشتراك' },
-    { code: 'DELYVO5',  type: 'fixed',   value: 5,  active: true, uses: 0, note: 'خصم ثابت' }
+    { code: 'WELKOM10', type: 'percent', value: 10, active: true, uses: 0, note: { ar: 'أول اشتراك', nl: 'Eerste abonnement', en: 'First subscription' } },
+    { code: 'DELYVO5',  type: 'fixed',   value: 5,  active: true, uses: 0, note: { ar: 'خصم ثابت', nl: 'Vaste korting', en: 'Fixed discount' } }
   ];
 
   const settings = {

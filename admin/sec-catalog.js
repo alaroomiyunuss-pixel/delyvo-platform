@@ -43,7 +43,7 @@
         <article class="card rcard ${r.active ? '' : 'off'}" style="--rc:${r.color || '#1FA06B'}">
           <header class="rc-h">
             ${avatar(r.name, r.color)}
-            <div class="grow"><h3>${esc(r.name)}</h3><p class="small muted">${esc(r.cuisine)} · <span class="lat">${esc(r.city)}</span></p></div>
+            <div class="grow"><h3>${esc(r.name)}</h3><p class="small muted">${esc(L(r.cuisine))} · <span class="lat">${esc(r.city)}</span></p></div>
             <label class="switch" title="${esc(r.active ? t('subst.active') : t('subst.paused'))}"><input type="checkbox" data-change="rest-active" data-id="${r.id}" ${r.active ? 'checked' : ''}><i></i></label>
           </header>
           ${r.active ? '' : `<div class="rc-off">${esc(t('rest.offNote'))}</div>`}
@@ -72,7 +72,7 @@
     if (!el.checked && !confirm(t('rest.pauseConfirm', { name: r.name }) + (st.upcoming ? '\n' + t('rest.pauseUpcoming', { n: st.upcoming }) : ''))) { el.checked = true; return; }
     DV.commit((s) => {
       const x = s.restaurants.find((y) => y.id === r.id); x.active = el.checked;
-      A.note(s, 'restaurant:' + r.id, { icon: el.checked ? '✅' : '⏸️', title: el.checked ? 'تم تفعيل مطعمك في Delyvo' : 'تم إيقاف مطعمك مؤقتاً', body: el.checked ? 'وجباتك ظاهرة للعملاء من جديد' : 'تواصل مع إدارة Delyvo' });
+      A.note(s, 'restaurant:' + r.id, { icon: el.checked ? '✅' : '⏸️', title: el.checked ? DV.tri('تم تفعيل مطعمك في Delyvo', 'Je restaurant is actief op Delyvo', 'Your restaurant is live on Delyvo') : DV.tri('تم إيقاف مطعمك مؤقتاً', 'Je restaurant is tijdelijk gepauzeerd', 'Your restaurant is temporarily paused'), body: el.checked ? DV.tri('وجباتك ظاهرة للعملاء من جديد', 'Je gerechten zijn weer zichtbaar voor klanten', 'Your meals are visible to customers again') : DV.tri('تواصل مع إدارة Delyvo', 'Neem contact op met Delyvo', 'Please contact Delyvo') });
     });
     toast(el.checked ? t('rest.t.activated') : t('rest.t.paused'), r.name, el.checked ? '✅' : '⏸️');
   };
@@ -85,7 +85,7 @@
       title: isNew ? t('rest.newTitle') : `${t('common.edit')} — ${r.name}`,
       body: `<div class="grid2">
         ${field(t('rest.f.name'), A.input('name', r.name))}
-        ${field(t('rest.f.cuisine'), A.input('cuisine', r.cuisine, `placeholder="${esc(t('rest.f.cuisinePh'))}"`))}
+        ${field(t('rest.f.cuisine'), A.input('cuisine', L(r.cuisine), `placeholder="${esc(t('rest.f.cuisinePh'))}"`))}
         ${field(t('cust.th.city'), `<select class="select" name="city">${[...new Set([r.city, ...DV.state.zones.map((z) => z.city)])].map((c) => opt(c, c, r.city)).join('')}</select>`)}
         ${field(t('sub.address'), A.input('address', r.address, 'dir="ltr"'))}
         ${field(t('cust.th.phone'), A.input('phone', r.phone, 'dir="ltr" class="input num"'))}
@@ -98,7 +98,8 @@
       onSave(form) {
         const name = A.fv(form, 'name'); if (!name) return A.invalid(form, 'name', t('rest.t.nameReq'));
         const cost = A.fn(form, 'costPerMeal'); if (!(cost > 0)) return A.invalid(form, 'costPerMeal', t('rest.t.costBad'));
-        const patch = { name, cuisine: A.fv(form, 'cuisine'), city: A.fv(form, 'city'), address: A.fv(form, 'address'), phone: A.fv(form, 'phone'), contact: A.fv(form, 'contact'),
+        const cv = A.fv(form, 'cuisine'); // keep other languages when editing a multilingual cuisine label
+        const patch = { name, cuisine: r.cuisine && typeof r.cuisine === 'object' ? { ...r.cuisine, [A.lang()]: cv } : cv, city: A.fv(form, 'city'), address: A.fv(form, 'address'), phone: A.fv(form, 'phone'), contact: A.fv(form, 'contact'),
           costPerMeal: cost, pin: A.fv(form, 'pin') || '1234', color: A.fv(form, 'color'), active: A.fbool(form, 'active') };
         DV.commit((s) => {
           if (isNew) s.restaurants.push({ id: 'r' + Date.now(), ...patch });
@@ -352,7 +353,7 @@
         <div class="panel-h"><div><h3>${esc(t('mkt.promos'))}</h3><p class="muted small">${esc(t('mkt.promosSub'))}</p></div><button class="btn btn-primary btn-sm" data-action="promo-edit">+ ${esc(t('mkt.newPromo'))}</button></div>
         ${s.promos.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr>${['sub.th.code', 'mkt.th.type', 'mkt.th.value', 'mkt.th.uses', 'mkt.th.note', 'mkt.th.active'].map((k) => `<th>${esc(t(k))}</th>`).join('')}<th></th></tr></thead><tbody>
           ${s.promos.map((p) => `<tr class="${p.active ? '' : 'row-off'}"><td><code class="code num">${esc(p.code)}</code></td><td>${esc(p.type === 'percent' ? t('mkt.percent') : t('mkt.fixed'))}</td>
-            <td><b class="num">${p.type === 'percent' ? p.value + '%' : esc(M(p.value))}</b></td><td class="num">${p.uses || 0}</td><td class="small muted">${esc(p.note || '')}</td>
+            <td><b class="num">${p.type === 'percent' ? p.value + '%' : esc(M(p.value))}</b></td><td class="num">${p.uses || 0}</td><td class="small muted">${esc(L(p.note) || '')}</td>
             <td><span class="switch"><input type="checkbox" data-change="promo-active" data-code="${esc(p.code)}" ${p.active ? 'checked' : ''}><i></i></span></td>
             <td><button class="btn btn-ghost btn-xs" data-action="promo-edit" data-code="${esc(p.code)}">${esc(t('common.edit'))}</button></td></tr>`).join('')}
         </tbody></table></div>` : empty('🏷️', t('mkt.noPromos'))}
@@ -395,10 +396,11 @@
     const target = draft('bc.target', 'customers');
     const tt = { ar: draft('bc.title_ar').trim(), nl: draft('bc.title_nl').trim(), en: draft('bc.title_en').trim() };
     const b = { ar: draft('bc.body_ar').trim(), nl: draft('bc.body_nl').trim(), en: draft('bc.body_en').trim() };
-    if (!tt.ar) { toast(t('mkt.t.titleArReq'), '', '⚠️'); return; }
+    if (!tt.ar && !tt.nl && !tt.en) { toast(t('mkt.t.titleArReq'), '', '⚠️'); return; }
     if (!confirm(t('mkt.sendConfirm'))) return;
-    const title = target === 'customers' ? { ar: tt.ar, nl: tt.nl || tt.ar, en: tt.en || tt.nl || tt.ar } : tt.ar;
-    const body = target === 'customers' ? { ar: b.ar, nl: b.nl || b.ar, en: b.en || b.nl || b.ar } : b.ar;
+    // every audience gets all three languages; empty ones fall back to whatever was filled in
+    const fill = (x) => ({ ar: x.ar || x.en || x.nl, nl: x.nl || x.en || x.ar, en: x.en || x.nl || x.ar });
+    const title = fill(tt), body = fill(b);
     const n = DV.broadcast(target, title, body);
     ['title_ar', 'title_nl', 'title_en', 'body_ar', 'body_nl', 'body_en'].forEach((k) => { delete A.ui.drafts['bc.' + k]; });
     A.render();
@@ -451,7 +453,7 @@
         ${field(t('sub.th.code'), A.input('code', p.code, 'dir="ltr" class="input num upper" placeholder="ZOMER15"'))}
         ${field(t('mkt.th.type'), `<select class="select" name="type">${opt('percent', t('mkt.percent') + ' %', p.type)}${opt('fixed', t('mkt.fixed') + ' €', p.type)}</select>`)}
         ${field(t('mkt.th.value'), A.input('value', p.value, 'type="number" step="0.5" min="0" class="input num"'))}
-        ${field(t('mkt.f.internalNote'), A.input('note', p.note))}
+        ${field(t('mkt.f.internalNote'), A.input('note', L(p.note)))}
         </div><label class="row sw-row">${sw('active', p.active)}<span>${esc(t('subst.active'))}</span></label>
         ${isNew ? '' : `<p class="tiny muted">${t('mkt.usedN', { n: `<span class="num">${p.uses || 0}</span>` })}</p>`}`,
       danger: isNew ? null : { label: t('mkt.deletePromo'), onClick: () => { if (!confirm(t('common.deleteConfirm', { name: p.code }))) return false; DV.commit((s) => { s.promos = s.promos.filter((x) => x.code !== p.code); }); toast(t('mkt.t.promoDeleted'), p.code, '🗑️'); } },
@@ -461,7 +463,8 @@
         if (DV.state.promos.some((x) => x.code === code && x.code !== p.code)) return A.invalid(form, 'code', t('mkt.t.codeExists'));
         const type = A.fv(form, 'type'), value = A.fn(form, 'value');
         if (!(value > 0) || (type === 'percent' && value > 100)) return A.invalid(form, 'value', t('common.badValue'));
-        const patch = { code, type, value, note: A.fv(form, 'note'), active: A.fbool(form, 'active') };
+        const nv = A.fv(form, 'note');
+        const patch = { code, type, value, note: p.note && typeof p.note === 'object' ? { ...p.note, [A.lang()]: nv } : nv, active: A.fbool(form, 'active') };
         DV.commit((s) => { if (isNew) s.promos.push({ ...patch, uses: 0 }); else Object.assign(s.promos.find((x) => x.code === p.code), patch); });
         toast(isNew ? t('mkt.t.promoAdded') : t('mkt.t.promoSaved'), code, '🏷️');
       }

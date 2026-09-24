@@ -415,7 +415,7 @@
             <div class="lbl-h">${esc(t('pick_r'))}</div>
             <div class="r-list">${rs.map((r) => `<button class="r-card${ui.loginR === r.id ? ' on' : ''}" data-act="pick-r" data-id="${esc(r.id)}">
               <span class="r-av" style="background:${esc(r.color || '#1FA06B')}">${esc((r.name || '?').charAt(0))}</span>
-              <span class="grow"><b>${esc(r.name)}</b><small>${esc(r.cuisine || '')} · ${esc(r.city || '')}</small></span>
+              <span class="grow"><b>${esc(r.name)}</b><small>${esc(DV.L(r.cuisine, lang) || '')} · ${esc(r.city || '')}</small></span>
               <span class="r-check">${icon('check', 16)}</span>
             </button>`).join('')}</div>
           </div>
@@ -452,7 +452,7 @@
       <div class="side-foot">
         <div class="me">
           <span class="r-av" style="background:${esc(r.color || '#1FA06B')}">${esc((r.name || '?').charAt(0))}</span>
-          <div class="grow"><b class="ellipsis">${esc(r.name || '')}</b><small class="ellipsis">${esc(r.cuisine || '')} · ${esc(r.city || '')}</small></div>
+          <div class="grow"><b class="ellipsis">${esc(r.name || '')}</b><small class="ellipsis">${esc(DV.L(r.cuisine, lang) || '')} · ${esc(r.city || '')}</small></div>
         </div>
         <button class="btn btn-ghost btn-sm btn-block" data-act="logout">${icon('logout', 16)} ${esc(t('logout'))}</button>
       </div>`;
