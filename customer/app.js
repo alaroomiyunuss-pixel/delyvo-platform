@@ -1,4 +1,4 @@
-/* Delyvo — customer app (mobile). Vanilla JS, state in window.DV (shared/store.js). */
+/* Delevo — customer app (mobile). Vanilla JS, state in window.DV (shared/store.js). */
 (function () {
   const $app = document.getElementById('app');
   let lang = localStorage.getItem('delyvo.customer.lang') || 'ar';
@@ -79,7 +79,7 @@
     const s = slides[ui.onb];
     return `<div class="screen onb">
       <div class="onb-img" style="background-image:url('${s.img}')"><div class="onb-fade"></div>
-        <div class="onb-top"><img src="../assets/img/logo.png" alt="Delyvo" class="onb-logo"><button class="chip" data-a="langSheet">${I.globe} ${{ ar: 'العربية', nl: 'Nederlands', en: 'English' }[lang]}</button></div></div>
+        <div class="onb-top"><img src="../assets/img/logo.png" alt="Delevo" class="onb-logo"><button class="chip" data-a="langSheet">${I.globe} ${{ ar: 'العربية', nl: 'Nederlands', en: 'English' }[lang]}</button></div></div>
       <div class="onb-body fade-up" key="${ui.onb}">
         <div class="dots">${slides.map((_, i) => `<i class="${i === ui.onb ? 'on' : ''}"></i>`).join('')}</div>
         <h1>${E(s.t)}</h1><p class="muted">${E(s.s)}</p>
@@ -114,7 +114,7 @@
         <button class="btn btn-primary btn-block" data-a="finishProfile">${T('continue')}</button>`;
     }
     return `<div class="screen ${ui.anim === 'push' ? 'push' : ''}">
-      <header class="nav">${L.step !== 'phone' ? `<button class="icon-btn" data-a="loginBack">${back()}</button>` : '<img src="../assets/img/logo.png" class="nav-logo" alt="Delyvo">'}<span class="grow"></span><button class="chip" data-a="langSheet">${I.globe} ${{ ar: 'العربية', nl: 'Nederlands', en: 'English' }[lang]}</button></header>
+      <header class="nav">${L.step !== 'phone' ? `<button class="icon-btn" data-a="loginBack">${back()}</button>` : '<img src="../assets/img/logo.png" class="nav-logo" alt="Delevo">'}<span class="grow"></span><button class="chip" data-a="langSheet">${I.globe} ${{ ar: 'العربية', nl: 'Nederlands', en: 'English' }[lang]}</button></header>
       <div class="scroll pad-x login stack" data-scroll="login">${body}</div></div>`;
   }
 
@@ -156,7 +156,7 @@
     const weekMeals = S.meals.filter((m) => m.active && (DV.restaurant(m.restaurantId) || {}).active !== false).sort((a, b) => b.rating - a.rating).slice(0, 10);
     return `<div class="scroll with-tabbar" data-scroll="home">
       <header class="home-head">
-        <div class="grow"><small class="muted">${greet()}${c ? '، ' : ''}</small><h2>${c ? E(firstName(c.name)) + ' 👋' : '<span class="logo-word">Delyvo</span>'}</h2></div>
+        <div class="grow"><small class="muted">${greet()}${c ? '، ' : ''}</small><h2>${c ? E(firstName(c.name)) + ' 👋' : '<span class="logo-word">Delevo</span>'}</h2></div>
         <button class="icon-btn" data-a="tab" data-t="inbox">${I.bell}${unread() ? `<i class="badge-dot num">${unread()}</i>` : ''}</button>
       </header>
       ${banners.length ? `<section class="banners"><div class="banner-track" data-banners>${banners.map((b) => `
@@ -341,7 +341,7 @@
         <button class="list-row danger" data-a="logout"><span class="lr-ic">↩︎</span><span class="grow">${T('logout')}</span></button>
         <button class="list-row" data-a="resetDemo"><span class="lr-ic">♻️</span><span class="grow muted">${T('resetDemo')}</span></button>
       </div>
-      <p class="tiny muted" style="text-align:center;margin:10px 0 20px">Delyvo · v1.0 demo</p></div>`;
+      <p class="tiny muted" style="text-align:center;margin:10px 0 20px">Delevo · v1.0 demo</p></div>`;
   }
 
   // ---------- sub pages ----------
@@ -659,25 +659,25 @@
     const w = ui.wiz; const pr = wPrice();
     if (s.stage === 'processing') return `<div class="pad stack pay-proc"><div class="spinner"></div><h3>${T('processing')}</h3><p class="muted num">${money(pr.total)}</p></div>`;
     if (w.pay === 'applepay') return `<div class="pad stack apple"><div class="row between"><b style="font-size:20px"> Pay</b><button class="link" data-a="closeSheet">${T('cancel')}</button></div>
-      <div class="ap-card"><span>💳</span><div class="grow"><b>Visa •••• 4242</b><small class="muted">Delyvo B.V.</small></div></div>
+      <div class="ap-card"><span>💳</span><div class="grow"><b>Visa •••• 4242</b><small class="muted">Delevo B.V.</small></div></div>
       <div class="row between"><span class="muted">${T('total')}</span><b class="num">${money(pr.total)}</b></div>
       <button class="faceid" data-a="payConfirm"><span class="fi">🙂</span><small>Face ID — ${T('confirmPay')}</small></button></div>`;
     const brand = { ideal: { n: w.bank, c: { ING: '#FF6200', Rabobank: '#000099', 'ABN AMRO': '#00857A', bunq: '#1F2B3A', Revolut: '#0666EB' }[w.bank] || '#CC0066' }, card: { n: '3-D Secure', c: '#1A1F71' }, paypal: { n: 'PayPal', c: '#003087' }, klarna: { n: 'Klarna', c: '#FFA8CD' } }[w.pay];
     return `<div class="bank-mock"><div class="bm-head" style="background:${brand.c}"><span>🔒 ${T('redirecting')} ${E(brand.n)}</span><button data-a="closeSheet">✕</button></div>
       <div class="pad stack" style="text-align:center"><div class="bm-logo" style="color:${brand.c}">${E(brand.n)}</div>
-      <p class="muted small">Delyvo B.V. · ${E(pr.promo || '')}</p><div class="bm-amt num">${money(pr.total)}</div>
+      <p class="muted small">Delevo B.V. · ${E(pr.promo || '')}</p><div class="bm-amt num">${money(pr.total)}</div>
       <p class="small muted">${w.pay === 'klarna' ? 'Betaal over 30 dagen · 0% rente' : w.pay === 'card' ? 'Bevestig de betaling in je bank-app' : 'Bevestig met je bank-app'}</p>
       <button class="btn btn-block" style="background:${brand.c};color:${w.pay === 'klarna' ? '#111' : '#fff'}" data-a="payConfirm">${T('confirmPay')}</button></div></div>`;
   }
   function shInvoice(s) {
     const sb = DV.sub(s.id); const c = me(); const p = DV.planType(sb.planType); const pr = sb.pricing;
     const line = (l, v) => `<div class="row between small"><span class="muted">${l}</span><span class="num">${v}</span></div>`;
-    return `<div class="pad stack invoice"><div class="row between"><span class="logo-word" style="font-size:22px">Delyvo</span><span class="chip chip-brand">${T('invoice')}</span></div>
+    return `<div class="pad stack invoice"><div class="row between"><span class="logo-word" style="font-size:22px">Delevo</span><span class="chip chip-brand">${T('invoice')}</span></div>
       ${line('No.', sb.payment.ref)}${line(T('dates'), new Date(sb.payment.paidAt).toLocaleDateString(lang === 'ar' ? 'ar-u-nu-latn' : lang))}${line(T('fullName'), E(c.name))}
       <div class="hr"></div>${line(`${p.icon} ${Lx(p.name)} · ${T('daysN', { n: sb.daysCount })} · ${Lx(DV.mealOption(sb.option).name)}`, money(pr.base))}
       ${pr.durDisc ? line(T('durationDisc'), '−' + money(pr.durDisc)) : ''}${pr.optDisc ? line(T('bothDisc'), '−' + money(pr.optDisc)) : ''}${pr.deliveryFee ? line(T('deliveryFee'), money(pr.deliveryFee)) : ''}${pr.promoDisc ? line(T('promo') + ' ' + pr.promo, '−' + money(pr.promoDisc)) : ''}
       <div class="hr"></div><div class="row between"><b>${T('total')}</b><b class="num">${money(pr.total)}</b></div>${line('BTW 9%', money(pr.vat))}${line(T('paidWith'), T(sb.payment.method))}
-      <p class="tiny muted">Delyvo B.V. · KvK 00000000 · BTW NL000000000B01</p>
+      <p class="tiny muted">Delevo B.V. · KvK 00000000 · BTW NL000000000B01</p>
       <button class="btn btn-ghost btn-block" data-a="closeSheet">${T('close')}</button></div>`;
   }
 
@@ -688,7 +688,7 @@
     markSeen('customer:' + c.id);
     ui.view = 'tabs'; ui.tab = 'home'; ui.anim = 'push'; ui.login = { step: 'phone', phone: '', code: '', name: '', email: '', err: '' };
     render();
-    DVUI.island(greet() + ' ' + firstName(c.name), 'Delyvo', '👋');
+    DVUI.island(greet() + ' ' + firstName(c.name), 'Delevo', '👋');
   }
   function wizNext() {
     const w = ui.wiz; if (!wValid()) return;
@@ -733,7 +733,7 @@
       const digits = ui.login.phone.replace(/\D/g, '');
       if (digits.length < 9) { ui.login.err = T('phone') + ' ✕'; return render(); }
       ui.login.err = ''; ui.login.step = 'otp'; ui.login.code = ''; ui.anim = 'push'; render();
-      setTimeout(() => DVUI.island('Delyvo', T('otpHint'), '💬'), 700);
+      setTimeout(() => DVUI.island('Delevo', T('otpHint'), '💬'), 700);
     },
     key: (d) => {
       const L = ui.login;

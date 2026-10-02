@@ -1,4 +1,4 @@
-/* Delyvo — seed catalogue (demo data, editable from the admin panel).
+/* Delevo — seed catalogue (demo data, editable from the admin panel).
    Restaurants are partners; customers never see restaurant names. */
 (function () {
   const IMG = (f) => '../assets/img/meals/' + f + '.jpg';
@@ -122,7 +122,7 @@
 
   const promos = [
     { code: 'WELKOM10', type: 'percent', value: 10, active: true, uses: 0, note: { ar: 'أول اشتراك', nl: 'Eerste abonnement', en: 'First subscription' } },
-    { code: 'DELYVO5',  type: 'fixed',   value: 5,  active: true, uses: 0, note: { ar: 'خصم ثابت', nl: 'Vaste korting', en: 'Fixed discount' } }
+    { code: 'DELEVO5',  type: 'fixed',   value: 5,  active: true, uses: 0, note: { ar: 'خصم ثابت', nl: 'Vaste korting', en: 'Fixed discount' } }
   ];
 
   const settings = {

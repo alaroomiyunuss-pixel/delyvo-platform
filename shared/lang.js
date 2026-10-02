@@ -1,4 +1,4 @@
-/* Delyvo — language selection shared by every page. Loaded first, before the apps read their saved language.
+/* Delevo — language selection shared by every page. Loaded first, before the apps read their saved language.
    1. ?lang=en (or ar / nl) in the URL sets the language for every app (hub, customer, driver, restaurant, admin).
    2. Otherwise, an app the visitor never set a language for follows the device/browser language:
       Arabic → ar, Dutch → nl, anything else → en. A language picked by hand is saved and always wins. */

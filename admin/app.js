@@ -1,4 +1,4 @@
-/* Delyvo admin — boot: language switch, navigation, router, global search, notifications bell. */
+/* Delevo admin — boot: language switch, navigation, router, global search, notifications bell. */
 (function () {
   const A = window.ADM;
   const { esc, L, toast, t } = A;

@@ -38,8 +38,8 @@ jobs:
         run: |
           BUILD=$((100 + GITHUB_RUN_NUMBER))
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination 'generic/platform=iOS' \
-            -archivePath build/Delyvo.xcarchive archive CURRENT_PROJECT_VERSION=$BUILD OTHER_CODE_SIGN_FLAGS="--keychain $KC" | tail -5
-          xcodebuild -exportArchive -archivePath build/Delyvo.xcarchive -exportPath build/export -exportOptionsPlist ExportOptions.plist | tail -3
+            -archivePath build/Delevo.xcarchive archive CURRENT_PROJECT_VERSION=$BUILD OTHER_CODE_SIGN_FLAGS="--keychain $KC" | tail -5
+          xcodebuild -exportArchive -archivePath build/Delevo.xcarchive -exportPath build/export -exportOptionsPlist ExportOptions.plist | tail -3
       - name: Upload to TestFlight
         working-directory: native
         run: xcrun altool --upload-app -f build/export/App.ipa -t ios --apiKey ${{ secrets.ASC_KEY_ID }} --apiIssuer ${{ secrets.ASC_ISSUER_ID }}

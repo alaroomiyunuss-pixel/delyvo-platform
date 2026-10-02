@@ -5,8 +5,8 @@
   <script src="shared/lang.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#F4F7F5">
-  <title>Delyvo · المنصة التجريبية</title>
-  <meta name="description" content="نموذج تفاعلي لمنصة Delyvo لاشتراكات الوجبات: تطبيق العميل، تطبيق السائق، لوحة المطعم، ولوحة الأدمن.">
+  <title>Delevo · المنصة التجريبية</title>
+  <meta name="description" content="نموذج تفاعلي لمنصة Delevo لاشتراكات الوجبات: تطبيق العميل، تطبيق السائق، لوحة المطعم، ولوحة الأدمن.">
   <link rel="icon" href="assets/img/icon-192.png">
   <link rel="stylesheet" href="shared/base.css">
   <style>
@@ -61,7 +61,7 @@
 </head>
 <body>
   <div class="wrap">
-    <header class="top"><img src="assets/img/logo.png" alt="Delyvo"><div class="row"><div class="lang-sw"><button data-lang="ar">عربي</button><button data-lang="en">EN</button></div><button class="btn btn-sm btn-ghost" id="reset" data-t="reset"></button></div></header>
+    <header class="top"><img src="assets/img/logo.png" alt="Delevo"><div class="row"><div class="lang-sw"><button data-lang="ar">عربي</button><button data-lang="en">EN</button></div><button class="btn btn-sm btn-ghost" id="reset" data-t="reset"></button></div></header>
     <section class="hero">
       <div>
         <span class="chip chip-brand" data-t="badge"></span>
@@ -103,7 +103,7 @@
     const TX = {
       ar: {
         reset: '♻️ إعادة ضبط البيانات', badge: 'نموذج تفاعلي كامل · بدون باك إند',
-        h1: 'منصة <span>Delyvo</span> لاشتراكات الوجبات — أربعة تطبيقات مترابطة',
+        h1: 'منصة <span>Delevo</span> لاشتراكات الوجبات — أربعة تطبيقات مترابطة',
         lead: 'العميل يشترك ويختار وجباته، الطلبات تتوزع تلقائياً على المطاعم الشريكة (بدون ما يشوف العميل أسماءها)، المطعم يحضّر ويطبع الاستكرات، السائق يستلم ويوصل، والأدمن يدير كل شي. كل التطبيقات متزامنة لحظياً داخل المتصفح.',
         openCustomer: '📱 افتح تطبيق العميل', live: '⚡ العرض المباشر المتزامن', qrT: 'جرّبه على جوالك', qrS: 'امسح الرمز، ثم «أضف إلى الشاشة الرئيسية» ليشتغل كتطبيق حقيقي بكامل الشاشة.',
         capC: '📱 تطبيق العميل', capD: '🛵 تطبيق السائق', capP: '🖥️ اللوحات', liveNote: 'اشترك من تطبيق العميل ← تنزل الطلبات فوراً في لوحة المطعم ← جهّزها ← السائق يستلم ← العميل يوصله إشعار. كله في نفس الشاشة.',
@@ -115,11 +115,11 @@
         hq: 'الإدارة الرئيسية', admList: li(['مؤشرات وإيرادات ورسوم بيانية', 'العمليات اليومية وتوزيع السائقين', 'الاشتراكات والعملاء والتقييمات', 'المطاعم الشريكة والوجبات والأسعار', 'البنرات، الأكواد، الإشعارات، الإعدادات', 'عربي · English']),
         admCred: 'دخول مباشر بدون كلمة مرور', cycle: 'دورة الطلب',
         flow: flow([['🧑‍💻', 'العميل يشترك', 'يختار الخطة والأيام ووجباته ويدفع.'], ['🧭', 'توزيع على المطاعم', 'كل وجبة تروح لمطبخها الشريك تلقائياً، والعميل ما يشوف اسم المطعم.'], ['🍳', 'المطعم يحضّر', 'يقبل ويحضّر ويطبع الاستكرات قبل الموعد.'], ['🛵', 'السائق يوصّل', 'يستلم من المطاعم ويوصل للعميل ضمن وقت التوصيل.'], ['⭐', 'إشعار وتقييم', 'العميل يتابع لحظياً ويقيّم، والتقييم يوصل للمطعم والأدمن.']]),
-        foot: 'Delyvo · نموذج تفاعلي. كل البيانات تجريبية ومحفوظة في متصفحك فقط.', confirm: 'إعادة كل البيانات التجريبية للوضع الأصلي؟', title: 'Delyvo · المنصة التجريبية'
+        foot: 'Delevo · نموذج تفاعلي. كل البيانات تجريبية ومحفوظة في متصفحك فقط.', confirm: 'إعادة كل البيانات التجريبية للوضع الأصلي؟', title: 'Delevo · المنصة التجريبية'
       },
       en: {
         reset: '♻️ Reset demo data', badge: 'Fully interactive prototype · no backend',
-        h1: 'The <span>Delyvo</span> meal-subscription platform — four connected apps',
+        h1: 'The <span>Delevo</span> meal-subscription platform — four connected apps',
         lead: 'Customers subscribe and pick their meals, orders are routed automatically to partner restaurants (customers never see their names), restaurants prepare and print labels, drivers pick up and deliver, and admins run everything. All apps sync live in the browser.',
         openCustomer: '📱 Open the customer app', live: '⚡ Live synced view', qrT: 'Try it on your phone', qrS: 'Scan the code, then "Add to Home Screen" to run it full-screen like a real app.',
         capC: '📱 Customer app', capD: '🛵 Driver app', capP: '🖥️ Dashboards', liveNote: 'Subscribe in the customer app → orders land instantly in the restaurant panel → mark them ready → the driver picks up → the customer gets notified. All on one screen.',
@@ -131,7 +131,7 @@
         hq: 'Headquarters', admList: li(['KPIs, revenue and charts', 'Daily operations and driver dispatch', 'Subscriptions, customers and reviews', 'Partner restaurants, meals and pricing', 'Banners, promo codes, notifications, settings', 'Arabic · English']),
         admCred: 'Opens directly — no password', cycle: 'Order lifecycle',
         flow: flow([['🧑‍💻', 'Customer subscribes', 'Chooses plan, days and meals, then pays.'], ['🧭', 'Routed to restaurants', 'Each meal goes to its partner kitchen automatically — the customer never sees the restaurant.'], ['🍳', 'Restaurant prepares', 'Accepts, cooks and prints labels before the slot.'], ['🛵', 'Driver delivers', 'Picks up from restaurants and delivers within the time window.'], ['⭐', 'Notify & rate', 'The customer tracks live and rates; ratings reach the restaurant and admin.']]),
-        foot: 'Delyvo · interactive prototype. All data is demo data stored only in your browser.', confirm: 'Reset all demo data to its original state?', title: 'Delyvo · Demo platform'
+        foot: 'Delevo · interactive prototype. All data is demo data stored only in your browser.', confirm: 'Reset all demo data to its original state?', title: 'Delevo · Demo platform'
       }
     };
     let lang = localStorage.getItem('delyvo.hub.lang') || 'ar';

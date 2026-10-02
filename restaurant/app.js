@@ -1,4 +1,4 @@
-/* Delyvo — Restaurant partner panel.
+/* Delevo — Restaurant partner panel.
    Frontend-only: reads/mutates the shared store (window.DV), live-synced across tabs.
    Views: orders board (kanban) · prep list · labels/stickers · my menu · performance. */
 (function () {
@@ -277,7 +277,7 @@
     const exp = DV.addDays(o.date, m.shelfDays || 2);
     return `<div class="lbl">
       <div class="l-head">
-        <img class="l-logo" src="../assets/img/logo.png" alt="Delyvo">
+        <img class="l-logo" src="../assets/img/logo.png" alt="Delevo">
         <span class="l-slot">${esc(slotTxt(o.slot))}</span>
         <span class="l-no num">${esc(o.no)}</span>
       </div>
@@ -306,7 +306,7 @@
     const nos = orders.map((o) => o.no).join(',');
     return `<div class="lbl lbl-bag">
       <div class="l-head">
-        <img class="l-logo" src="../assets/img/logo.png" alt="Delyvo">
+        <img class="l-logo" src="../assets/img/logo.png" alt="Delevo">
         <span class="l-slot">${icon('bag', 11)} ${esc(t('bag'))}</span>
         <span class="l-no num">${orders.length}×</span>
       </div>
@@ -370,7 +370,7 @@
     const d = prepData(date);
     const r = R();
     const head = forPrint ? `<div class="pp-head">
-        <img src="../assets/img/logo.png" alt="Delyvo" class="pp-logo">
+        <img src="../assets/img/logo.png" alt="Delevo" class="pp-logo">
         <div class="grow"><h2>${esc(t('prep_h'))} · ${esc(r.name || '')}</h2><div class="muted">${esc(longDate(date))}</div></div>
         <div class="muted small">${esc(t('generated'))} ${esc(DV.fmtTime(Date.now(), lang))}</div>
       </div>` : '';
@@ -404,7 +404,7 @@
     return `<div class="login">
       <div class="login-card fade-up">
         <div class="login-top">
-          <img src="../assets/img/logo.png" alt="Delyvo" class="login-logo">
+          <img src="../assets/img/logo.png" alt="Delevo" class="login-logo">
           ${langSeg()}
         </div>
         <span class="eyebrow">${esc(t('partner'))}</span>
@@ -445,7 +445,7 @@
   function sideHTML() {
     const r = R();
     const counts = { board: myOrders(DV.today()).filter((o) => ['scheduled'].includes(o.status)).length, labels: myOrders(ui.date).filter((o) => !o.printed).length };
-    return `<div class="side-brand"><img src="../assets/img/logo.png" alt="Delyvo"><span class="side-tag">${esc(t('partner'))}</span></div>
+    return `<div class="side-brand"><img src="../assets/img/logo.png" alt="Delevo"><span class="side-tag">${esc(t('partner'))}</span></div>
       <nav class="nav">${VIEWS.map((v) => `<button class="nav-i${ui.view === v ? ' on' : ''}" data-act="nav" data-v="${v}">
         ${icon(v, 21)}<span class="nav-t">${esc(t('nav_' + v))}</span>${counts[v] ? `<span class="nav-n num">${counts[v]}</span>` : ''}
       </button>`).join('')}</nav>
@@ -784,7 +784,7 @@
   }
   function updateTitle() {
     const unread = rid ? DV.notificationsFor('restaurant:' + rid).filter((n) => !n.read).length : 0;
-    document.title = (unread ? `(${unread}) ` : '') + 'Delyvo · ' + t('title');
+    document.title = (unread ? `(${unread}) ` : '') + 'Delevo · ' + t('title');
   }
   function render() {
     if (!HAS_DOM) return;

@@ -1,4 +1,4 @@
-/* Delyvo admin — Dashboard, daily Operations, Reviews */
+/* Delevo admin — Dashboard, daily Operations, Reviews */
 (function () {
   const A = window.ADM;
   const { t, D, M, normSt, statusKeys, stLabel, esc, L, money, num, sum, fdate, fdateLong, ftime, ago, pill, stars, windowLabel, slotLabel, avatar, opt, empty, toast } = A;
@@ -305,7 +305,7 @@
     toast(n ? t('ops.t.assigned', { n }) : t('ops.t.allAssigned'), t('ops.t.byZone'), '⚡');
     if (n) { // let each driver know
       const per = {}; DV.state.orders.filter((o) => o.date === d && o.driverId).forEach((o) => { per[o.driverId] = (per[o.driverId] || 0) + 1; });
-      DV.commit((s) => Object.entries(per).forEach(([did, c]) => A.note(s, 'driver:' + did, { icon: '🗺️', title: DV.tri(`مسار ${DV.fmtDate(d, 'ar', { weekday: 'long' })}: ${c} طلب`, `Route ${DV.fmtDate(d, 'nl', { weekday: 'long' })}: ${c} bestelling(en)`, `Route for ${DV.fmtDate(d, 'en', { weekday: 'long' })}: ${c} order(s)`), body: DV.tri('تم تحديث قائمة التوصيل من الإدارة', 'Je bezorglijst is bijgewerkt door Delyvo', 'Your delivery list was updated by Delyvo') })));
+      DV.commit((s) => Object.entries(per).forEach(([did, c]) => A.note(s, 'driver:' + did, { icon: '🗺️', title: DV.tri(`مسار ${DV.fmtDate(d, 'ar', { weekday: 'long' })}: ${c} طلب`, `Route ${DV.fmtDate(d, 'nl', { weekday: 'long' })}: ${c} bestelling(en)`, `Route for ${DV.fmtDate(d, 'en', { weekday: 'long' })}: ${c} order(s)`), body: DV.tri('تم تحديث قائمة التوصيل من الإدارة', 'Je bezorglijst is bijgewerkt door Delevo', 'Your delivery list was updated by Delevo') })));
     }
   };
   A.chg['ops-driver'] = (el) => {

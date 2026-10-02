@@ -1,4 +1,4 @@
-/* Delyvo — shared client-side store.
+/* Delevo — shared client-side store.
    One JSON document in localStorage, synced live between every open tab/app
    (storage event + BroadcastChannel). All four apps (customer, driver,
    restaurant, admin) read and mutate the same state through window.DV.
@@ -112,7 +112,7 @@
   function persist() {
     state.rev = (state.rev || 0) + 1;
     state.updatedAt = Date.now();
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { console.warn('Delyvo: storage full', e); }
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { console.warn('Delevo: storage full', e); }
     if (bc) bc.postMessage({ rev: state.rev });
   }
   function emit(remote) { listeners.forEach((fn) => { try { fn(state, { remote }); } catch (e) { console.error(e); } }); }
@@ -465,7 +465,7 @@
     s.meals.forEach((m) => { if (!m.ratingCount) { m.rating = 4.4 + rnd() * 0.5; m.ratingCount = 3 + Math.floor(rnd() * 20); } m.rating = Math.round(m.rating * 10) / 10; });
     // a few starter notifications
     notify('customer:c1', { icon: '👋', title: { ar: 'أهلاً سارة! اشتراكك الصحي فعّال', nl: 'Hoi Sara! Je Gezond-abonnement is actief', en: 'Hi Sara! Your Healthy plan is active' }, body: { ar: 'تقدر تغيّر وجباتك أو تأجل أي يوم حتى الساعة 12 منتصف الليل قبل يوم التوصيل', nl: 'Wijzigen of verzetten kan tot middernacht vóór de bezorgdag', en: 'Change or postpone until midnight before the delivery day' }, at: Date.now() - 864e5 * 3, read: true });
-    notify('admin', { icon: '📊', title: tri('مرحباً في لوحة Delyvo', 'Welkom in het Delyvo-dashboard', 'Welcome to the Delyvo dashboard'), body: tri('البيانات تجريبية ومتزامنة مع كل التطبيقات', 'Demodata, live gesynchroniseerd met alle apps', 'Demo data, synced live with every app'), read: false });
+    notify('admin', { icon: '📊', title: tri('مرحباً في لوحة Delevo', 'Welkom in het Delevo-dashboard', 'Welcome to the Delevo dashboard'), body: tri('البيانات تجريبية ومتزامنة مع كل التطبيقات', 'Demodata, live gesynchroniseerd met alle apps', 'Demo data, synced live with every app'), read: false });
     s.restaurants.forEach((rs) => notify('restaurant:' + rs.id, { icon: '🧾', title: tri('طلبات اليوم جاهزة في اللوحة', 'De bestellingen van vandaag staan klaar', "Today's orders are on the board"), body: tri('اطبع الاستكرات قبل بدء التحضير', 'Print de etiketten voor je begint', 'Print the labels before you start prepping') }));
     s.drivers.forEach((d) => notify('driver:' + d.id, { icon: '🗺️', title: tri('مسار اليوم جاهز', 'Je route van vandaag staat klaar', "Today's route is ready"), body: tri('ابدأ بالاستلام من المطاعم', 'Begin met ophalen bij de restaurants', 'Start with the restaurant pickups') }));
     return s;

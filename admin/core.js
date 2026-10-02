@@ -1,4 +1,4 @@
-/* Delyvo admin — core: helpers, charts, modal/drawer infrastructure, render loop, event delegation.
+/* Delevo admin — core: helpers, charts, modal/drawer infrastructure, render loop, event delegation.
    Sections register themselves on window.ADM.sections; click handlers on ADM.act (data-action),
    change handlers on ADM.chg (data-change), input handlers on ADM.inp (data-input). */
 (function () {
@@ -269,7 +269,7 @@
     A.renderNav();
     A.renderBell();
     A.renderDrawer();
-    document.title = `${sec.title} · Delyvo Admin`;
+    document.title = `${sec.title} · Delevo Admin`;
   };
 
   // ---------------------------------------------------------------- nav & bell

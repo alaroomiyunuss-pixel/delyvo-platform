@@ -1,4 +1,4 @@
-/* Delyvo admin — i18n: AR / EN dictionaries + t(key, vars).
+/* Delevo admin — i18n: AR / EN dictionaries + t(key, vars).
    Loaded in <head> (before core.js). Values are plain strings with {var} placeholders, or functions (vars) => string
    for English plurals. Vars are inserted raw (callers pass pre-escaped HTML when the result is used as HTML). */
 (function () {
@@ -28,7 +28,7 @@
     'f.lunchDinner': 'غداء + عشاء', 'f.clear': 'مسح الفلاتر',
 
     // ---- shell / static html
-    'app.docTitle': 'Delyvo — لوحة الأدمن', 'app.panel': 'لوحة الأدمن',
+    'app.docTitle': 'Delevo — لوحة الأدمن', 'app.panel': 'لوحة الأدمن',
     'sb.otherApps': 'التطبيقات الأخرى', 'sb.customerApp': '📱 تطبيق العميل', 'sb.driverApp': '🛵 تطبيق السائق', 'sb.restApp': '🍳 لوحة المطعم', 'sb.home': '🏠 الصفحة الرئيسية',
     'tb.menu': 'القائمة', 'tb.searchPh': 'ابحث عن عميل، طلب (DV…)، اشتراك (SUB-…)', 'tb.customer': 'العميل ↗', 'tb.driver': 'السائق ↗', 'tb.restaurant': 'المطعم ↗',
     'tb.lang': 'اللغة', 'app.reset': 'إعادة ضبط البيانات التجريبية',
@@ -121,14 +121,14 @@
     'drv.t.nameReq': 'اكتب اسم السائق', 'drv.t.pinBad': 'PIN يجب أن يكون ٤–٦ أرقام', 'drv.t.saved': 'تم حفظ السائق', 'drv.t.added': 'تمت إضافة السائق',
 
     // ---- restaurants
-    'rest.sub': 'Delyvo بدون مطبخ — كل الوجبات من مطاعم شريكة. العميل لا يرى أسماء المطاعم.', 'rest.new': 'مطعم جديد', 'rest.newTitle': 'مطعم شريك جديد',
+    'rest.sub': 'Delevo بدون مطبخ — كل الوجبات من مطاعم شريكة. العميل لا يرى أسماء المطاعم.', 'rest.new': 'مطعم جديد', 'rest.newTitle': 'مطعم شريك جديد',
     'rest.kpi.active': 'مطاعم فعّالة', 'rest.kpi.delivered': 'وجبات مُسلّمة هذا الشهر', 'rest.kpi.payout': 'مستحقات المطاعم هذا الشهر', 'rest.kpi.payoutSub': 'عدد الوجبات × تكلفة الوجبة',
     'rest.offNote': 'موقوف — وجباته مخفية عن العملاء', 'rest.cost': 'تكلفة الوجبة', 'rest.todayOrders': 'طلبات اليوم',
     'rest.monthDelivered': 'مُسلّمة هذا الشهر', 'rest.monthPayout': 'المستحق هذا الشهر',
     'rest.pauseConfirm': 'إيقاف {name}؟ ستُخفى وجباته فوراً من تطبيق العميل.', 'rest.pauseUpcoming': '⚠ لديه {n} طلب قادم — راجعها من الاشتراكات.',
     'rest.t.activated': 'تم تفعيل المطعم', 'rest.t.paused': 'تم إيقاف المطعم',
     'rest.f.name': 'اسم المطعم', 'rest.f.cuisine': 'المطبخ', 'rest.f.cuisinePh': 'عربي / تركي / صحي…', 'rest.f.contact': 'الشخص المسؤول',
-    'rest.f.cost': 'ما تدفعه Delyvo لكل وجبة (€)', 'rest.f.pin': 'PIN لوحة المطعم', 'rest.f.color': 'لون التمييز', 'rest.f.active': 'فعّال (وجباته ظاهرة للعملاء)',
+    'rest.f.cost': 'ما تدفعه Delevo لكل وجبة (€)', 'rest.f.pin': 'PIN لوحة المطعم', 'rest.f.color': 'لون التمييز', 'rest.f.active': 'فعّال (وجباته ظاهرة للعملاء)',
     'rest.t.nameReq': 'اكتب اسم المطعم', 'rest.t.costBad': 'تكلفة الوجبة غير صحيحة', 'rest.t.added': 'تمت إضافة المطعم', 'rest.t.saved': 'تم حفظ المطعم',
 
     // ---- meals
@@ -212,7 +212,7 @@
     'f.lunchDinner': 'Lunch + dinner', 'f.clear': 'Clear filters',
 
     // ---- shell / static html
-    'app.docTitle': 'Delyvo — Admin', 'app.panel': 'Admin panel',
+    'app.docTitle': 'Delevo — Admin', 'app.panel': 'Admin panel',
     'sb.otherApps': 'Other apps', 'sb.customerApp': '📱 Customer app', 'sb.driverApp': '🛵 Driver app', 'sb.restApp': '🍳 Restaurant panel', 'sb.home': '🏠 Home page',
     'tb.menu': 'Menu', 'tb.searchPh': 'Search customers, orders (DV…), subscriptions (SUB-…)', 'tb.customer': 'Customer ↗', 'tb.driver': 'Driver ↗', 'tb.restaurant': 'Restaurant ↗',
     'tb.lang': 'Language', 'app.reset': 'Reset demo data',
@@ -308,14 +308,14 @@
     'drv.t.nameReq': "Enter the driver's name", 'drv.t.pinBad': 'PIN must be 4–6 digits', 'drv.t.saved': 'Driver saved', 'drv.t.added': 'Driver added',
 
     // ---- restaurants
-    'rest.sub': "Delyvo has no kitchen — every meal comes from partner restaurants. Customers never see restaurant names.", 'rest.new': 'New restaurant', 'rest.newTitle': 'New partner restaurant',
+    'rest.sub': "Delevo has no kitchen — every meal comes from partner restaurants. Customers never see restaurant names.", 'rest.new': 'New restaurant', 'rest.newTitle': 'New partner restaurant',
     'rest.kpi.active': 'Active restaurants', 'rest.kpi.delivered': 'Meals delivered this month', 'rest.kpi.payout': 'Restaurant payouts this month', 'rest.kpi.payoutSub': 'Meals × cost per meal',
     'rest.offNote': 'Paused — meals hidden from customers', 'rest.cost': 'Cost per meal', 'rest.todayOrders': "Today's orders",
     'rest.monthDelivered': 'Delivered this month', 'rest.monthPayout': 'Payout this month',
     'rest.pauseConfirm': 'Pause {name}? Its meals will be hidden from the customer app immediately.', 'rest.pauseUpcoming': (v) => `⚠ It has ${v.n} upcoming ${pl(v.n, 'order', 'orders')} — review them under Subscriptions.`,
     'rest.t.activated': 'Restaurant activated', 'rest.t.paused': 'Restaurant paused',
     'rest.f.name': 'Restaurant name', 'rest.f.cuisine': 'Cuisine', 'rest.f.cuisinePh': 'Arabic / Turkish / Healthy…', 'rest.f.contact': 'Contact person',
-    'rest.f.cost': 'Delyvo pays per meal (€)', 'rest.f.pin': 'Restaurant panel PIN', 'rest.f.color': 'Accent colour', 'rest.f.active': 'Active (meals visible to customers)',
+    'rest.f.cost': 'Delevo pays per meal (€)', 'rest.f.pin': 'Restaurant panel PIN', 'rest.f.color': 'Accent colour', 'rest.f.active': 'Active (meals visible to customers)',
     'rest.t.nameReq': 'Enter the restaurant name', 'rest.t.costBad': 'Invalid cost per meal', 'rest.t.added': 'Restaurant added', 'rest.t.saved': 'Restaurant saved',
 
     // ---- meals

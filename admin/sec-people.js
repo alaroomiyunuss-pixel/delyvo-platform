@@ -1,4 +1,4 @@
-/* Delyvo admin — Subscriptions, Customers, Drivers (+ detail drawers) */
+/* Delevo admin — Subscriptions, Customers, Drivers (+ detail drawers) */
 (function () {
   const A = window.ADM;
   const { t, D, M, cutoffLabel, esc, L, money, num, sum, fdate, fdateLong, fts, pill, stars, windowLabel, slotLabel, payLabel, weekdayShort, subChip, avatar, opt, empty, toast, round2 } = A;
@@ -197,7 +197,7 @@
           if (o.restaurantId) perR[o.restaurantId] = (perR[o.restaurantId] || 0) + 1;
         }
       });
-      Object.entries(perR).forEach(([rid, c]) => A.note(s, 'restaurant:' + rid, { icon: '🚫', title: DV.tri(`إلغاء ${c} طلب`, `${c} bestelling(en) geannuleerd`, `${c} order(s) cancelled`), body: DV.tri(`اشتراك ${x.code} أُلغي من الإدارة`, `Abonnement ${x.code} geannuleerd door Delyvo`, `Subscription ${x.code} was cancelled by Delyvo`) }));
+      Object.entries(perR).forEach(([rid, c]) => A.note(s, 'restaurant:' + rid, { icon: '🚫', title: DV.tri(`إلغاء ${c} طلب`, `${c} bestelling(en) geannuleerd`, `${c} order(s) cancelled`), body: DV.tri(`اشتراك ${x.code} أُلغي من الإدارة`, `Abonnement ${x.code} geannuleerd door Delevo`, `Subscription ${x.code} was cancelled by Delevo`) }));
       A.note(s, 'customer:' + x.customerId, { icon: '🚫', title: { ar: 'تم إلغاء اشتراكك', nl: 'Je abonnement is geannuleerd', en: 'Your plan was cancelled' }, body: { ar: `${x.code} — تواصل معنا لأي استفسار`, nl: `${x.code} — neem contact op bij vragen`, en: `${x.code} — contact us with any questions` } });
       A.note(s, 'admin', { icon: '🚫', title: DV.tri(`إلغاء اشتراك ${x.code}`, `Abonnement ${x.code} geannuleerd`, `Subscription ${x.code} cancelled`), body: DV.tri(`${k} طلب قادم أُلغي`, `${k} komende bestelling(en) geannuleerd`, `${k} upcoming order(s) cancelled`) });
       return k;

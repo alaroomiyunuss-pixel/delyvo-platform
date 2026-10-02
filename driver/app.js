@@ -1,4 +1,4 @@
-/* Delyvo Driver — simple rider app (frontend-only demo, data via window.DV). */
+/* Delevo Driver — simple rider app (frontend-only demo, data via window.DV). */
 (function () {
   'use strict';
 
@@ -12,7 +12,7 @@
   // ---------------------------------------------------------------- i18n
   const T = {
     ar: {
-      appName: 'Delyvo Driver', chooseAccount: 'اختر حسابك', enterPin: 'أدخل رمز الدخول', pinHint: 'رموز تجريبية: 1111 · 2222 · 3333',
+      appName: 'Delevo Driver', chooseAccount: 'اختر حسابك', enterPin: 'أدخل رمز الدخول', pinHint: 'رموز تجريبية: 1111 · 2222 · 3333',
       wrongPin: 'الرمز غير صحيح', loginSub: 'استلم من المطاعم، وصّل للمشتركين.', back: 'رجوع',
       tabToday: 'الرئيسية', tabRoute: 'المسار', tabEarn: 'الأرباح', tabNotif: 'الإشعارات', tabProfile: 'حسابي',
       morning: 'صباح الخير', afternoon: 'مساء الخير', today: 'اليوم', tomorrow: 'غداً',
@@ -40,7 +40,7 @@
       byHand: 'سُلّمت للعميل', byDoor: 'تُركت عند الباب', meal: 'وجبة', restaurant: 'المطعم', photoAdded: 'تمت إضافة الصورة'
     },
     nl: {
-      appName: 'Delyvo Driver', chooseAccount: 'Kies je account', enterPin: 'Voer je pincode in', pinHint: 'Demo-codes: 1111 · 2222 · 3333',
+      appName: 'Delevo Driver', chooseAccount: 'Kies je account', enterPin: 'Voer je pincode in', pinHint: 'Demo-codes: 1111 · 2222 · 3333',
       wrongPin: 'Onjuiste pincode', loginSub: 'Ophalen bij restaurants, bezorgen bij abonnees.', back: 'Terug',
       tabToday: 'Vandaag', tabRoute: 'Route', tabEarn: 'Verdiensten', tabNotif: 'Meldingen', tabProfile: 'Profiel',
       morning: 'Goedemorgen', afternoon: 'Goedemiddag', today: 'Vandaag', tomorrow: 'Morgen',
@@ -68,7 +68,7 @@
       byHand: 'Aan klant gegeven', byDoor: 'Bij de deur gezet', meal: 'maaltijd', restaurant: 'Restaurant', photoAdded: 'Foto toegevoegd'
     },
     en: {
-      appName: 'Delyvo Driver', chooseAccount: 'Choose your account', enterPin: 'Enter your PIN', pinHint: 'Demo codes: 1111 · 2222 · 3333',
+      appName: 'Delevo Driver', chooseAccount: 'Choose your account', enterPin: 'Enter your PIN', pinHint: 'Demo codes: 1111 · 2222 · 3333',
       wrongPin: 'Incorrect PIN', loginSub: 'Pick up from restaurants, deliver to subscribers.', back: 'Back',
       tabToday: 'Today', tabRoute: 'Route', tabEarn: 'Earnings', tabNotif: 'Alerts', tabProfile: 'Profile',
       morning: 'Good morning', afternoon: 'Good afternoon', today: 'Today', tomorrow: 'Tomorrow',
@@ -260,7 +260,7 @@
     app.innerHTML = `<div class="login">
       <div class="lg-top">
         <div class="lg-lang">${langSeg()}</div>
-        <div class="lg-brand"><div class="lg-logo">${ic('route', 34, 2)}</div><h1>Delyvo <span>Driver</span></h1><p>${t('loginSub')}</p></div>
+        <div class="lg-brand"><div class="lg-logo">${ic('route', 34, 2)}</div><h1>Delevo <span>Driver</span></h1><p>${t('loginSub')}</p></div>
       </div>
       <div class="lg-sheet fade-up">${body}</div>
     </div>`;
@@ -636,7 +636,7 @@
         <a class="li press-soft" href="https://wa.me/${E(String(DV.state.settings.supportWhatsapp || '').replace(/\D/g, ''))}" target="_blank" rel="noopener" data-act="noop">${ic('help', 20)}<div class="grow"><b>${t('support')}</b></div><span class="chev">${ic('chev', 18)}</span></a>
       </div>
       <button class="btn btn-danger btn-block logout" data-act="logout">${ic('logout', 18)} ${t('logout')}</button>
-      <p class="muted tiny center-note">Delyvo · ${t('driverApp')} · ${t('version')}</p>
+      <p class="muted tiny center-note">Delevo · ${t('driverApp')} · ${t('version')}</p>
       <div class="end-space"></div>`;
   }
 

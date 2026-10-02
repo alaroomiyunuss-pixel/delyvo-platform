@@ -1,4 +1,4 @@
-/* Delyvo admin — Restaurants, Meals catalogue, Plans & pricing, Marketing, Settings */
+/* Delevo admin — Restaurants, Meals catalogue, Plans & pricing, Marketing, Settings */
 (function () {
   const A = window.ADM;
   const { t, M, cutoffLabel, esc, L, money, num, sum, fdate, stars, avatar, opt, empty, toast, round2, field, trio, trioArea, readTrio, sw, togChip, weekdays } = A;
@@ -72,7 +72,7 @@
     if (!el.checked && !confirm(t('rest.pauseConfirm', { name: r.name }) + (st.upcoming ? '\n' + t('rest.pauseUpcoming', { n: st.upcoming }) : ''))) { el.checked = true; return; }
     DV.commit((s) => {
       const x = s.restaurants.find((y) => y.id === r.id); x.active = el.checked;
-      A.note(s, 'restaurant:' + r.id, { icon: el.checked ? '✅' : '⏸️', title: el.checked ? DV.tri('تم تفعيل مطعمك في Delyvo', 'Je restaurant is actief op Delyvo', 'Your restaurant is live on Delyvo') : DV.tri('تم إيقاف مطعمك مؤقتاً', 'Je restaurant is tijdelijk gepauzeerd', 'Your restaurant is temporarily paused'), body: el.checked ? DV.tri('وجباتك ظاهرة للعملاء من جديد', 'Je gerechten zijn weer zichtbaar voor klanten', 'Your meals are visible to customers again') : DV.tri('تواصل مع إدارة Delyvo', 'Neem contact op met Delyvo', 'Please contact Delyvo') });
+      A.note(s, 'restaurant:' + r.id, { icon: el.checked ? '✅' : '⏸️', title: el.checked ? DV.tri('تم تفعيل مطعمك في Delevo', 'Je restaurant is actief op Delevo', 'Your restaurant is live on Delevo') : DV.tri('تم إيقاف مطعمك مؤقتاً', 'Je restaurant is tijdelijk gepauzeerd', 'Your restaurant is temporarily paused'), body: el.checked ? DV.tri('وجباتك ظاهرة للعملاء من جديد', 'Je gerechten zijn weer zichtbaar voor klanten', 'Your meals are visible to customers again') : DV.tri('تواصل مع إدارة Delevo', 'Neem contact op met Delevo', 'Please contact Delevo') });
     });
     toast(el.checked ? t('rest.t.activated') : t('rest.t.paused'), r.name, el.checked ? '✅' : '⏸️');
   };

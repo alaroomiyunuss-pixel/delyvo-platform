@@ -1,7 +1,7 @@
 {
-  "name": "Delyvo Driver",
-  "short_name": "Delyvo Driver",
-  "description": "تطبيق سائقي Delyvo — الاستلام من المطاعم وتوصيل الوجبات للمشتركين",
+  "name": "Delevo Driver",
+  "short_name": "Delevo Driver",
+  "description": "تطبيق سائقي Delevo — الاستلام من المطاعم وتوصيل الوجبات للمشتركين",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "./",

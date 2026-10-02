@@ -1,4 +1,4 @@
-/* Delyvo — restaurant partner panel (light theme only). Uses tokens from shared/base.css. */
+/* Delevo — restaurant partner panel (light theme only). Uses tokens from shared/base.css. */
 
 body { background: var(--bg); min-height: 100vh; }
 .ic { flex: none; display: block; }

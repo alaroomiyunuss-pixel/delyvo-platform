@@ -1,4 +1,4 @@
-/* Delyvo Driver — light, native-feeling rider app */
+/* Delevo Driver — light, native-feeling rider app */
 #app { -webkit-tap-highlight-color: transparent; background: var(--bg); }
 #app button, #app .press, #app .tab, #app .key, #app a.icon-btn, #app .qa { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 #app * { -webkit-tap-highlight-color: transparent; }

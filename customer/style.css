@@ -1,4 +1,4 @@
-/* Delyvo customer app — native-feel mobile UI */
+/* Delevo customer app — native-feel mobile UI */
 #app { -webkit-tap-highlight-color: transparent; }
 #app button, #app .tb, #app .chip { user-select: none; -webkit-user-select: none; }
 .screen { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
