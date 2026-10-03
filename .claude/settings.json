@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./native/node_modules/**)",
+      "Read(./native/ios/**)",
+      "Read(./native/build/**)",
+      "Read(./native/www/**)",
+      "Read(./assets/img/**)",
+      "Read(./.git/**)"
+    ]
+  }
+}

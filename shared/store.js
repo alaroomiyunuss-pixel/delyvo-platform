@@ -105,15 +105,33 @@
   const addrLabel = (a, lang = 'ar') => (a && a.labelKey && ADDR_LABELS[a.labelKey] ? ADDR_LABELS[a.labelKey][lang] : L(a && a.label, lang));
 
   // ---------------- persistence & sync ----------------
+  // Local mode: localStorage + BroadcastChannel (same device only).
+  // Server mode (API set): the server holds the one true document. Every commit is applied locally at once,
+  // then pushed with the server revision it was based on; on a conflict (409) we adopt the server state and
+  // re-run the not-yet-acknowledged commits on top of it, so no device overwrites another.
+  const DEFAULT_API = 'https://delevo-sync.34-7-31-149.sslip.io'; // set to the sync server URL (no trailing slash) once deployed
+  let API = '';
+  try {
+    const q = new URLSearchParams(location.search).get('api');
+    if (q !== null) localStorage.setItem('delyvo.api', q);
+    API = (localStorage.getItem('delyvo.api') ?? window.DV_API ?? DEFAULT_API) || '';
+  } catch (e) { API = window.DV_API || DEFAULT_API || ''; }
+  API = API.replace(/\/+$/, '');
+  let srvRev = null, pending = [], pushing = false, forceNext = false, retry = 0, syncOk = false;
+
   function readStored() {
     try { const raw = localStorage.getItem(KEY); if (raw) { const s = JSON.parse(raw); if (s && s.version === VERSION) return s; } } catch (e) {}
     return null;
   }
+  function saveLocal() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { console.warn('Delevo: storage full', e); }
+    if (bc) bc.postMessage({ rev: state.rev });
+  }
   function persist() {
     state.rev = (state.rev || 0) + 1;
     state.updatedAt = Date.now();
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { console.warn('Delevo: storage full', e); }
-    if (bc) bc.postMessage({ rev: state.rev });
+    saveLocal();
+    if (API) push();
   }
   function emit(remote) { listeners.forEach((fn) => { try { fn(state, { remote }); } catch (e) { console.error(e); } }); }
   function reloadRemote() {
@@ -126,8 +144,51 @@
   function commit(fn) {
     const fresh = readStored(); if (fresh) state = fresh;
     const out = fn(state);
+    if (API) pending.push(fn);
     persist(); emit(false);
     return out;
+  }
+
+  // ---- server sync ----
+  const setSync = (ok) => { if (syncOk !== ok) { syncOk = ok; try { window.dispatchEvent(new CustomEvent('dv-sync', { detail: { online: ok } })); } catch (e) {} } };
+  function adopt(serverState, rev) {
+    srvRev = rev;
+    serverState.rev = (state.rev || 0) + 1;
+    state = serverState;
+    const queued = pending.slice();
+    queued.forEach((fn) => { try { fn(state); } catch (e) { console.error(e); } });
+    saveLocal();
+    emit(true);
+  }
+  async function pull() {
+    try {
+      const r = await fetch(API + '/api/state', { cache: 'no-store' });
+      const j = await r.json(); setSync(true);
+      if (!j.state) { srvRev = j.rev; push(); return; } // empty server → our seeded state becomes the shared one
+      if (j.rev !== srvRev) adopt(j.state, j.rev);
+      if (pending.length) push();
+    } catch (e) { setSync(false); setTimeout(pull, Math.min(30000, 1500 * ++retry)); }
+  }
+  async function push() {
+    if (pushing || srvRev === null) return;
+    pushing = true;
+    const sent = pending.length, force = forceNext; forceNext = false;
+    try {
+      const r = await fetch(API + '/api/state', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ baseRev: srvRev, state, force }) });
+      const j = await r.json(); setSync(true); retry = 0;
+      if (r.status === 409) { pushing = false; adopt(j.state, j.rev); return push(); }
+      if (r.ok) { srvRev = j.rev; pending.splice(0, sent); }
+    } catch (e) { setSync(false); setTimeout(push, Math.min(30000, 1500 * ++retry)); }
+    pushing = false;
+    if (pending.length && srvRev !== null && retry === 0) push();
+  }
+  function connect() {
+    if (!API) return;
+    pull();
+    if (!('EventSource' in window)) { setInterval(pull, 5000); return; }
+    const es = new EventSource(API + '/api/events');
+    es.onmessage = (e) => { try { const { rev } = JSON.parse(e.data); if (rev !== srvRev) pull(); } catch (x) {} };
+    es.onerror = () => setSync(false);
   }
 
   // ---------------- lookups ----------------
@@ -471,7 +532,7 @@
     return s;
   }
 
-  function reset() { state = seed(); housekeeping(); persist(); emit(false); }
+  function reset() { state = seed(); housekeeping(); pending = []; forceNext = true; persist(); emit(false); }
 
   function session(app, value) {
     const k = 'delyvo.session.' + app;
@@ -484,11 +545,12 @@
   state = readStored();
   if (!state) { state = seed(); persist(); }
   housekeeping();
+  connect();
 
   window.DV = {
     get state() { return state; },
     on: (fn) => { listeners.add(fn); return () => listeners.delete(fn); },
-    commit, reset, session,
+    commit, reset, session, syncStatus: () => ({ api: API, online: syncOk, pending: pending.length }),
     today, addDays, weekday, isLocked, cutoffLabel, fmtDate, fmtTime, fromISO, toISO,
     L, money, esc, uid, STATUS, SLOTS, tri, addrLabel, FAIL_REASONS, ALLERGENS: SEED.ALLERGENS, TAGS: SEED.TAGS,
     meal, restaurant, customer, driver, sub, order, planType, mealOption, driverForCity,
